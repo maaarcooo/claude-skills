@@ -5,23 +5,33 @@ description: Extract and clean PDF content to markdown format. Use when the user
 
 # PDF Content Extraction Skill
 
-Extract PDF content to clean, organized markdown with maximum fidelity.
+Extract PDF content to clean, organized markdown.
 
-## Workflow Overview
+## Workflow
 
-1. **Extract**: Run `extract_pdf.py` to get raw content + metadata
-2. **Analyse**: Review extracted content for patterns and issues
-3. **Clean**: Remove noise (footers, watermarks, branding)
-4. **Organise**: Restructure fragmented content into logical flow
-5. **Output**: Deliver clean markdown to user
+1. **Extract** — Run script to get raw content + metadata
+2. **Analyse** — Review for patterns and issues
+3. **Clean** — Remove noise (footers, watermarks, branding)
+4. **Organise** — Restructure fragmented content
+5. **Output** — Deliver clean markdown
 
-## Step 1: Extract Raw Content
+## Step 1: Extract
 
 ```bash
-python /mnt/skills/user/pdf-extract/scripts/extract_pdf.py /mnt/user-data/uploads/{filename}.pdf /home/claude/extracted/
+python /mnt/skills/user/pdf-extract/scripts/extract_pdf.py \
+    /mnt/user-data/uploads/{filename}.pdf \
+    /home/claude/extracted/
 ```
 
-**Output structure:**
+**Options:**
+| Option | Description |
+|--------|-------------|
+| `--pages 1-10` | Extract specific page range |
+| `--method pymupdf4llm` | Force primary extractor (better formatting) |
+| `--method pymupdf` | Force fallback (more reliable for scanned PDFs) |
+| `--min-image-size 100` | Skip images smaller than 100px (filters icons) |
+
+**Output:**
 ```
 /home/claude/extracted/
 ├── {filename}.md      # Raw markdown with YAML frontmatter
@@ -29,14 +39,9 @@ python /mnt/skills/user/pdf-extract/scripts/extract_pdf.py /mnt/user-data/upload
 └── images/            # Extracted images (if any)
 ```
 
-**Script options:**
-- `--pages 1-10` — Extract specific page range
-- `--method pymupdf4llm` — Force primary extractor (better formatting)
-- `--method pymupdf` — Force fallback extractor (more reliable for scanned PDFs)
-- `--min-image-size 100` — Skip images smaller than 100px
+## Step 2: Analyse
 
-## Step 2: Analyse Extracted Content
-
+Read the extracted markdown:
 ```bash
 cat /home/claude/extracted/{filename}.md
 ```
@@ -44,196 +49,141 @@ cat /home/claude/extracted/{filename}.md
 **Check YAML frontmatter for:**
 - `extraction_method` — Which extractor was used
 - `total_pages` — Document length
-- `has_outline` — Whether bookmarks exist
-- `total_images` — Number of images to reference
+- `has_outline` — Bookmarks exist (helps with structure)
+- `total_images` — Number of images
 
-**Identify patterns requiring cleanup:**
+**Identify issues requiring cleanup:**
+- Repeated footers/headers on every page
+- Watermarks, branding, page numbers
+- Fragmented sentences across line breaks
+- Malformed tables
+- Image markers needing repositioning
 
-| Pattern | Examples | Action |
-|---------|----------|--------|
-| Repeated footers | "© Company", "Page X of Y" | Remove all |
-| Watermarks | "DRAFT", bit.ly links | Remove |
-| Page artifacts | Standalone numbers | Remove |
-| Fragmented text | Split sentences | Rejoin |
+## Step 3: Clean
 
-## Step 3: Content Cleanup
+Remove noise based on document type. Load references as needed:
 
-Apply cleanup rules based on detected patterns.
+**Repeated elements & source-specific patterns:**
+See [cleanup-patterns.md](references/cleanup-patterns.md)
+- Use when: footers, headers, SME/PMT branding detected
 
-**Reference:** See [cleanup-patterns.md](references/cleanup-patterns.md) for:
-- Repeated element detection and removal
-- Source-specific patterns (Save My Exams, PMT, etc.)
-- Text artifact fixes (hyphenation, whitespace, characters)
+**Text fragmentation:**
+See [sentence-reflow.md](references/sentence-reflow.md)
+- Use when: sentences split across lines or pages
 
-## Step 4: Content Organisation
+**Table issues:**
+See [table-formatting.md](references/table-formatting.md)
+- Use when: tables have missing delimiters, broken structure
 
-### Rejoin Fragmented Content
+**Image handling:**
+See [image-handling.md](references/image-handling.md)
+- Use when: document contains images to process
 
-**Sentences split at line breaks:**
+## Step 4: Organise
+
+### Heading Hierarchy
+
+- Use `#` → `##` → `###` consistently
+- Don't skip levels
+- Remove redundant numbering if using markdown headers
+
+### Paragraph Flow
+
+- Single blank line between paragraphs
+- Remove orphan lines (single words alone)
+- Merge related short paragraphs
+
+### Image Placement
+
+Convert markers to proper markdown:
 ```markdown
 <!-- Before -->
-A database management system (DBMS) is software that
-manages databases and provides users with an interface.
+<!-- IMAGE: images/page003_img001.png (450x280px) -->
 
 <!-- After -->
-A database management system (DBMS) is software that manages databases and provides users with an interface.
+![Figure 1: Description](./images/page003_img001.png)
 ```
 
-**Detection rules:**
-- Line ends without sentence-ending punctuation (`. ! ? :`)
-- Next line starts with lowercase
-- Next line continues the same thought
+View each image with `view` tool to write accurate alt text.
 
-**Do NOT rejoin:**
-- Code blocks
-- List items
-- Table cells
-- Headings followed by body text
+## Step 5: Output
 
-### Fix Malformed Tables
-
-**Reference:** See [table-formatting.md](references/table-formatting.md) for:
-- Misaligned columns
-- Missing delimiters
-- Duplicate headers from page breaks
-- Tables split across pages
-
-### Handle Images
-
-If images were extracted (check `total_images` in YAML header):
-
-**Reference:** See [image-handling.md](references/image-handling.md) for:
-- Distinguishing content from branding images
-- Writing descriptive alt text
-- Repositioning based on context clues
-- Copying images to output
-
-**Quick workflow:**
-```bash
-# View extracted images
-ls /home/claude/extracted/images/
-view /home/claude/extracted/images/page001_img001.png
-
-# Convert markers to proper markdown
-![Figure 1: Description based on image content](./images/page001_img001.png)
-```
-
-### Apply Consistent Formatting
-
-**Headings:**
-- Use hierarchy consistently (# → ## → ###)
-- Don't skip levels
-
-**Lists:**
-- Use consistent markers
-- Maintain proper nesting
-
-**Paragraphs:**
-- Single blank line between paragraphs
-- Remove orphan lines
-
-## Step 5: Output Clean Markdown
-
-### Structure
-
-```markdown
-# {Document Title}
-
-{Brief description if helpful}
-
-## {First Major Section}
-
-{Clean content...}
-
----
-
-*Source: {original filename} | Extracted: {date}*
-```
-
-### Quality Checklist
+### Quality Check
 
 - [ ] No repeated footers/headers
 - [ ] No standalone page numbers
-- [ ] No broken sentences
-- [ ] Headings follow logical hierarchy
+- [ ] No watermarks or branding
+- [ ] Sentences properly rejoined
 - [ ] Tables intact and readable
-- [ ] Images have descriptive alt text
-- [ ] Image paths are correct (`./images/filename.png`)
+- [ ] Images converted to markdown syntax
+- [ ] Heading hierarchy logical
 
-### Save and Present
+### Save Files
 
 **With images:**
 ```bash
 mkdir -p /mnt/user-data/outputs/images/
-cp /home/claude/cleaned_document.md /mnt/user-data/outputs/{filename}_clean.md
+cp /home/claude/cleaned.md /mnt/user-data/outputs/{filename}_clean.md
 cp -r /home/claude/extracted/images/* /mnt/user-data/outputs/images/
 ```
 
 **Without images:**
 ```bash
-cp /home/claude/cleaned_document.md /mnt/user-data/outputs/{filename}_clean.md
+cp /home/claude/cleaned.md /mnt/user-data/outputs/{filename}_clean.md
 ```
 
-Present with summary of:
-- Pages and images extracted
-- Types of noise removed
-- Any issues noted
+### Summary to User
 
-## Special Cases
-
-### Scanned/Image-based PDFs
-
-If extraction produces minimal text:
-- Check `extraction_method` in metadata
-- Inform user the PDF appears scanned
-- Suggest OCR tools if needed
-
-### Multi-column Layouts
-
-pymupdf4llm handles columns reasonably well. Verify:
-- Text isn't interleaved incorrectly
-- Reading order is logical
-
-### Very Large Documents (50+ pages)
-
-1. Extract in ranges: `--pages 1-25`, then `--pages 26-50`
-2. Process sections separately
-3. Combine cleaned sections at end
+Include:
+- Pages extracted
+- What was cleaned (types of noise removed)
+- Images included (remind about `images/` folder requirement)
+- Any limitations noted
 
 ## Error Handling
 
 | Error | Cause | Solution |
 |-------|-------|----------|
 | "File not found" | Wrong path | Check `/mnt/user-data/uploads/` |
-| "Invalid PDF header" | Not a PDF | Inform user |
-| "Extraction failed" | Protection/corruption | Try `--method pymupdf` |
+| "Invalid PDF header" | Not a PDF | Inform user file is invalid |
+| "Extraction failed" | Protected/corrupted | Try `--method pymupdf` |
 | Empty output | Scanned PDF | Inform user, suggest OCR |
 
-## Example Session
+## Special Cases
 
-**User uploads:** `Physics_Chapter_5.pdf`
+### Scanned/Image PDFs
 
+If `extraction_method` shows `pymupdf (fallback)` with minimal text:
+- PDF is likely scanned/image-based
+- Inform user OCR tools may be needed
+
+### Large Documents (50+ pages)
+
+Consider extracting in ranges:
 ```bash
-# 1. Extract
-python /mnt/skills/user/pdf-extract/scripts/extract_pdf.py \
-    /mnt/user-data/uploads/Physics_Chapter_5.pdf \
-    /home/claude/extracted/
-
-# 2. Read and identify patterns
-cat /home/claude/extracted/Physics_Chapter_5.md
-# Found: SME branding (12x), "Your notes" (12x), 3 images
-
-# 3. View images for alt text
-view /home/claude/extracted/images/page002_img001.png
-
-# 4. Clean: remove branding, rejoin paragraphs, add alt text
-
-# 5. Output
-mkdir -p /mnt/user-data/outputs/images/
-cp -r /home/claude/extracted/images/* /mnt/user-data/outputs/images/
+python extract_pdf.py doc.pdf ./out1/ --pages 1-25
+python extract_pdf.py doc.pdf ./out2/ --pages 26-50
 ```
 
-**Summary to user:**
-> Extracted 12 pages. Removed Save My Exams branding and page numbers. Included 3 figures with captions.
-> 
-> **Note:** Keep the `images/` folder alongside the markdown for images to display.
+### Multi-Column Layouts
+
+Verify reading order makes sense. pymupdf4llm handles columns reasonably but may interleave incorrectly.
+
+## Output Format
+
+Final markdown structure:
+```markdown
+# {Document Title}
+
+## {First Section}
+
+{Clean content...}
+
+## {Second Section}
+
+{Clean content...}
+
+---
+
+*Source: {filename}.pdf | Extracted: {date}*
+```
