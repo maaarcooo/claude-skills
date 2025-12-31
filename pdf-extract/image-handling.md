@@ -1,122 +1,147 @@
-# Image Handling
+# Image Handling Reference
 
-Reference for processing extracted images from PDFs.
+Guide for processing extracted images from PDFs.
 
-## Identify Content vs Branding
+## Contents
 
-### Branding/Icon Images (Exclude)
+- [Content vs Branding Images](#content-vs-branding-images)
+- [Viewing and Describing Images](#viewing-and-describing-images)
+- [Converting Markers to Markdown](#converting-markers-to-markdown)
+- [Repositioning Images](#repositioning-images)
+- [Output Structure](#output-structure)
+
+---
+
+## Content vs Branding Images
+
+Check image dimensions in `metadata.json` to distinguish:
+
+### Branding/Icons (exclude)
 
 - Very small: 32x32, 48x48, 64x64 pixels
-- Repeated on every page (watermarks, headers)
+- Repeated on every page
 - Company logos, social media icons
 - Navigation arrows, bullet graphics
 
-### Content Images (Include)
+### Content Images (include)
 
-- Larger dimensions: 200+ pixels in either dimension
+- Larger: 200+ pixels in either dimension
 - Diagrams, charts, graphs
 - Screenshots, photos
 - Tables rendered as images
 - Mathematical figures, circuit diagrams
 
-### Quick Size Check
-
+**Quick filter:** Use `--min-image-size 100` to auto-skip small icons:
 ```bash
-cat /home/claude/extracted/metadata.json | grep -A5 '"images"'
+python extract_pdf.py document.pdf --min-image-size 100
 ```
 
-Look for patterns:
-- Multiple 32x32 images = branding icons (exclude)
-- Images 400x300, 500x400 = content (include)
+---
 
-## View and Describe Images
+## Viewing and Describing Images
+
+Use `view` tool to see each image:
 
 ```bash
-# List extracted images
-ls /home/claude/extracted/images/
-
-# View an image
 view /home/claude/extracted/images/page001_img001.png
 ```
 
-## Convert Markers to Markdown
-
-```markdown
-<!-- Raw extraction marker -->
-<!-- IMAGE: images/page001_img001.png (400x300px) -->
-
-<!-- Convert to proper markdown -->
-![Figure 1: Diagram showing voltage-current relationship](./images/page001_img001.png)
-```
-
-## Write Descriptive Alt Text
-
-After viewing each image, write alt text that:
-- Describes what the image shows
-- Captures key visible information
-- Helps readers who cannot see the image
+Write descriptive alt text capturing:
+- What the image shows (diagram, graph, photo)
+- Key information visible
+- Context for readers who cannot see it
 
 **Examples:**
 ```markdown
-![Figure 1: Graph showing exponential decay of radioactive isotope over time](./images/page001_img001.png)
-![Figure 2: Circuit diagram with resistor R1 in series with capacitor C1](./images/page002_img001.png)
-![Table 1: Comparison of properties for different materials](./images/page003_img001.png)
+![Graph showing exponential decay of radioactive isotope over time](./images/page001_img001.png)
+
+![Circuit diagram with resistor R1 in series with capacitor C1](./images/page002_img001.png)
+
+![ER diagram showing Customer, Order, and Product relationships](./images/page003_img001.png)
 ```
 
-## Reposition Based on Context
+---
 
-The script estimates positions, but look for contextual clues:
+## Converting Markers to Markdown
 
-**Image follows (place after this text):**
+Replace HTML comment markers with proper syntax:
+
+```markdown
+<!-- Before (raw extraction) -->
+<!-- IMAGE: images/page003_img001.png (450x280px, middle of page) -->
+
+<!-- After (clean markdown) -->
+![Figure 1: Description based on viewing the image](./images/page003_img001.png)
+```
+
+---
+
+## Repositioning Images
+
+The script estimates positions, but adjust based on context clues:
+
+### Clues indicating image follows
+
 - "as shown below"
 - "see the diagram below"
 - "the following figure"
 - "illustrated here"
 
-**Image precedes (place before this text):**
+### Clues indicating image precedes
+
 - "as shown above"
-- "the diagram above shows"
+- "the diagram above"
 - "in the figure above"
 
-**Example repositioning:**
+### Example
+
 ```markdown
-<!-- Before: marker placed by estimation -->
-<!-- IMAGE: images/page003_img001.png -->
+<!-- Before: marker from estimation -->
+<!-- IMAGE: images/page003_img001.png (middle of page) -->
 
-The ER diagram below shows the relationships between tables.
+The ER diagram below shows the table relationships.
 
-<!-- After: moved to match "below" reference -->
-The ER diagram below shows the relationships between tables.
+<!-- After: moved to match "below" -->
+The ER diagram below shows the table relationships.
 
-![Figure 1: ER diagram showing Customer, Order, Product relationships](./images/page003_img001.png)
+![Figure 1: ER diagram showing table relationships](./images/page003_img001.png)
 ```
 
-**When no textual clues exist:**
-- Place diagrams after the paragraph introducing the concept
+### Fallback rules (no textual clues)
+
+- Place diagrams after paragraph introducing the concept
 - Place tables near data discussions
 - Place screenshots near UI descriptions
 
-## Copy Images to Output
+---
 
+## Output Structure
+
+**With images:**
 ```bash
 mkdir -p /mnt/user-data/outputs/images/
-cp /home/claude/cleaned_document.md /mnt/user-data/outputs/
+cp /home/claude/cleaned.md /mnt/user-data/outputs/
 cp -r /home/claude/extracted/images/* /mnt/user-data/outputs/images/
 ```
 
-## Handle Missing or Corrupt Images
-
-If an image fails to extract:
-- Note in output: `[Image could not be extracted]`
-- Check `metadata.json` for extraction errors
-- Inform user which images were problematic
-
-## Base64 Embedding (Optional)
-
-For single self-contained file (increases file size significantly):
-
-```markdown
-![Figure 1: Description](data:image/png;base64,iVBORw0KGgo...)
+**Result:**
+```
+/mnt/user-data/outputs/
+├── document_clean.md
+└── images/
+    ├── page001_img001.png
+    └── page002_img001.png
 ```
 
-Only use if specifically requested.
+**Note to user:** The `images/` folder must stay alongside the markdown file for images to display.
+
+---
+
+## Handling Issues
+
+| Issue | Solution |
+|-------|----------|
+| Image fails to extract | Note `[Image could not be extracted]` |
+| Corrupt image file | Check `metadata.json` for errors |
+| Wrong position | Use textual clues to reposition |
+| Missing alt text | View image and describe content |
