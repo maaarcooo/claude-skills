@@ -1,6 +1,8 @@
 # Sentence Reflow Reference
 
-Techniques for rejoining fragmented text from PDF extraction.
+Techniques for rejoining fragmented text when manually rewriting clean content.
+
+> **Usage:** When writing the clean output, apply these principles to produce properly flowing prose. Read the fragmented input and write it correctly — do not script text replacements.
 
 ## Contents
 
