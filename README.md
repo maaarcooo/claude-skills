@@ -1,4 +1,4 @@
-# Claude-Skills
+# Claude Skills
 
 A collection of Claude AI skills for intelligent PDF document processing and extraction.
 
