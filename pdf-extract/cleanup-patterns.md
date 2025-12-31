@@ -1,6 +1,8 @@
 # Cleanup Patterns Reference
 
-Patterns for removing noise from extracted PDF content.
+Patterns for identifying noise in extracted PDF content.
+
+> **Usage:** These patterns help Claude recognise what to skip when manually rewriting clean content. Do not use these as regex patterns or script inputs.
 
 ## Contents
 
