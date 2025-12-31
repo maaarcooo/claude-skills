@@ -35,6 +35,7 @@ python /mnt/skills/user/pdf-extract/scripts/extract_pdf.py /mnt/user-data/upload
 - `--pages 1-10` — Extract specific page range
 - `--method pymupdf4llm` — Force primary extractor (better formatting)
 - `--method pymupdf` — Force fallback extractor (more reliable for scanned PDFs)
+- `--min-image-size 100` — Skip images smaller than 100px (filters icons/logos)
 
 ## Step 2: Read and Analyse Extracted Content
 
@@ -165,24 +166,61 @@ Answer key on page {N}
 
 ### 4.2 Reconstruct Logical Flow
 
-**Rejoin split paragraphs:**
-```markdown
-<!-- Before -->
-This is the beginning of a paragraph that was
-<!-- PAGE 2 END -->
-<!-- PAGE 3 START -->
-split across two pages in the PDF.
+#### 4.2.1 Rejoin Fragmented Sentences
 
-<!-- After -->
-This is the beginning of a paragraph that was split across two pages in the PDF.
+PDF extraction often breaks sentences at visual line endings. Detect and fix these patterns:
+
+**Pattern A: Mid-sentence line breaks (most common)**
+```markdown
+<!-- Before: sentence split at PDF line wrap -->
+A database management system (DBMS) is software that
+manages databases and provides users with an interface
+to interact with the data stored within them.
+
+<!-- After: rejoined into proper paragraph -->
+A database management system (DBMS) is software that manages databases and provides users with an interface to interact with the data stored within them.
 ```
 
-**Rejoin split lists:**
+**Detection rules:**
+- Line ends without sentence-ending punctuation (`.` `!` `?` `:`)
+- Next line starts with lowercase letter
+- Next line continues the same thought
+
+**Pattern B: Hyphenated word splits**
+```markdown
+<!-- Before -->
+The rela-
+tional model organises data into tables.
+
+<!-- After -->
+The relational model organises data into tables.
+```
+
+**Pattern C: Splits across page markers**
+```markdown
+<!-- Before -->
+This concept is fundamental to understanding
+<!-- PAGE 5 END -->
+<!-- PAGE 6 START -->
+how databases maintain referential integrity.
+
+<!-- After -->
+This concept is fundamental to understanding how databases maintain referential integrity.
+```
+
+**When NOT to rejoin:**
+- Intentional line breaks in code blocks
+- List items (each item is meant to be separate)
+- Table cells
+- Headings followed by body text
+
+#### 4.2.2 Rejoin Split Lists
+
 ```markdown
 <!-- Before -->
 1. First item
 2. Second item
-<!-- PAGE BREAK -->
+<!-- PAGE BREAK artifacts -->
 3. Third item
 
 <!-- After -->
@@ -191,8 +229,30 @@ This is the beginning of a paragraph that was split across two pages in the PDF.
 3. Third item
 ```
 
-**Reconstruct tables:**
-If a table is split across pages, merge the rows into a single table.
+#### 4.2.3 Reconstruct Split Tables
+
+If a table is split across pages:
+
+```markdown
+<!-- Before: table header repeated on page 2 -->
+| Name | Type |
+|------|------|
+| id | INT |
+| name | VARCHAR |
+
+| Name | Type |
+|------|------|
+| email | VARCHAR |
+| created | DATE |
+
+<!-- After: merged into single table -->
+| Name | Type |
+|------|------|
+| id | INT |
+| name | VARCHAR |
+| email | VARCHAR |
+| created | DATE |
+```
 
 ### 4.3 Apply Consistent Formatting
 
@@ -211,11 +271,116 @@ If a table is split across pages, merge the rows into a single table.
 - Remove orphan lines (single words on their own line)
 - Merge related short paragraphs if appropriate
 
+### 4.3.1 Fix Malformed Tables
+
+pymupdf4llm may produce tables with formatting issues. Common problems and fixes:
+
+**Problem A: Misaligned columns**
+```markdown
+<!-- Before: columns don't align -->
+| Field | Type | Description |
+|---|---|---|
+| id | INT | Primary key |
+| name | VARCHAR(50) | User's full name which may be quite long |
+
+<!-- After: proper alignment (optional but cleaner) -->
+| Field | Type        | Description                              |
+|-------|-------------|------------------------------------------|
+| id    | INT         | Primary key                              |
+| name  | VARCHAR(50) | User's full name which may be quite long |
+```
+
+**Problem B: Missing cell delimiters**
+```markdown
+<!-- Before: broken table structure -->
+| Method | Description
+|--------|------------
+| GET | Retrieve data
+| POST Submit data
+
+<!-- After: fixed delimiters -->
+| Method | Description   |
+|--------|---------------|
+| GET    | Retrieve data |
+| POST   | Submit data   |
+```
+
+**Problem C: Table converted to plain text**
+
+If a complex table was extracted as jumbled text rather than markdown table:
+1. Identify the data structure from context
+2. Reconstruct as a proper markdown table
+3. Or present as a definition list if table format doesn't fit:
+
+```markdown
+<!-- Alternative: definition list for simple key-value data -->
+**Field definitions:**
+- **id**: INT - Primary key
+- **name**: VARCHAR(50) - User's full name
+- **email**: VARCHAR(100) - Contact email
+```
+
+**Problem D: Merged cells extracted incorrectly**
+
+Tables with merged/spanning cells often extract poorly. Options:
+1. Split into separate simple tables
+2. Add notes explaining the relationship
+3. Convert to nested lists if clearer
+
+**Problem E: Table headers repeated (page break)**
+```markdown
+<!-- Before: header appears twice -->
+| Name | Type |
+|------|------|
+| id | INT |
+| Name | Type |
+| email | VARCHAR |
+
+<!-- After: remove duplicate header -->
+| Name | Type |
+|------|------|
+| id | INT |
+| email | VARCHAR |
+```
+
 ### 4.4 Handle Images
 
 If images were extracted (check `total_images` in YAML header), handle them properly:
 
-#### 4.4.1 View Extracted Images
+#### 4.4.1 Identify Content vs Branding Images
+
+Check `metadata.json` or the image dimensions to distinguish content from branding:
+
+**Branding/icon images (typically exclude):**
+- Very small: 32x32, 48x48, 64x64 pixels (logos, icons)
+- Repeated on every page (watermarks, headers)
+- Company logos, social media icons
+- Navigation arrows, bullet graphics
+
+**Content images (typically include):**
+- Larger dimensions: 200+ pixels in either dimension
+- Diagrams, charts, graphs
+- Screenshots, photos
+- Tables rendered as images
+- Mathematical figures, circuit diagrams
+
+**Quick filter by size:**
+```bash
+# List images with dimensions to identify small icons
+cat /home/claude/extracted/metadata.json | grep -A5 '"images"'
+```
+
+Look for patterns like:
+- Multiple 32x32 images = likely branding icons (exclude)
+- Images 400x300, 500x400, etc. = likely content (include)
+
+When copying images to output, only include content images:
+```bash
+# Example: copy only images larger than 100x100
+# (Claude should filter based on metadata.json review)
+```
+
+#### 4.4.2 View Extracted Images
 
 Use the `view` tool to see each image and understand its content:
 
@@ -260,6 +425,43 @@ After viewing each image, write meaningful alt text that:
 - Place images near the text that references them
 - If the original position is unclear, place after the paragraph that introduces the concept
 - For figures referenced by number ("see Figure 3"), ensure numbering matches
+
+#### 4.4.4 Reposition Images Based on Context
+
+The script estimates image positions, but they may need adjustment. Look for contextual clues:
+
+**Clue phrases that indicate an image follows:**
+- "as shown below"
+- "see the diagram below"
+- "the following figure"
+- "illustrated here"
+- "see Figure X"
+
+**Clue phrases that indicate an image precedes:**
+- "as shown above"
+- "the diagram above shows"
+- "in the figure above"
+- "as illustrated"
+
+**Repositioning example:**
+```markdown
+<!-- Before: marker placed by script estimation -->
+<!-- IMAGE: images/page003_img001.png (450x280px, middle of page) -->
+
+The Entity-Relationship diagram below shows the relationships
+between the Customer, Order, and Product tables.
+
+<!-- After: moved to match "below" reference -->
+The Entity-Relationship diagram below shows the relationships
+between the Customer, Order, and Product tables.
+
+![Figure 1: ER diagram showing Customer, Order, and Product table relationships](./images/page003_img001.png)
+```
+
+**When no textual clues exist:**
+- Place diagrams/figures after the paragraph that introduces the concept
+- Place tables near data discussions
+- Place screenshots near UI/interface descriptions
 
 #### 4.4.5 Copy Images to Output
 
