@@ -73,8 +73,8 @@ VERSION = "1.0.0"
 FALLBACK_THRESHOLD = 5000
 
 # Minimum image dimensions to extract (skip tiny artifacts)
-MIN_IMAGE_WIDTH = 10
-MIN_IMAGE_HEIGHT = 10
+# Can be overridden via --min-image-size CLI argument
+MIN_IMAGE_SIZE = 10  # Default: 10x10 (extract almost everything)
 
 # =============================================================================
 # EXCEPTIONS
@@ -572,7 +572,7 @@ class PDFExtractor:
     # Content Extraction Methods
     # -------------------------------------------------------------------------
     
-    def extract_images(self, output_folder: str) -> List[Dict[str, Any]]:
+    def extract_images(self, output_folder: str, min_size: int = None) -> List[Dict[str, Any]]:
         """
         Extract all embedded images from the PDF.
         
@@ -582,6 +582,10 @@ class PDFExtractor:
         Args:
             output_folder: Directory to save extracted images.
                           Will be created if it doesn't exist.
+            min_size: Minimum dimension (width or height) to extract.
+                     Images smaller than this in BOTH dimensions are skipped.
+                     Defaults to MIN_IMAGE_SIZE constant (10).
+                     Use higher values (e.g., 100) to skip icons/logos.
         
         Returns:
             List of image metadata, each containing:
@@ -597,16 +601,19 @@ class PDFExtractor:
             - position: Bounding box on page [x0, y0, x1, y1]
         
         Notes:
-            - Skips very small images (< MIN_IMAGE_WIDTH x MIN_IMAGE_HEIGHT)
-              as these are often artifacts or spacers
+            - Skips very small images (< min_size in both dimensions)
+              as these are often artifacts, icons, or branding
             - Attempts to preserve original format (JPEG/PNG)
             - CMYK images are converted to RGB for compatibility
             - Returns empty list if no images found
         
         Example:
-            >>> images = pdf.extract_images("./output/images/")
-            >>> print(f"Extracted {len(images)} images")
+            >>> images = pdf.extract_images("./output/images/", min_size=100)
+            >>> print(f"Extracted {len(images)} content images (skipped icons)")
         """
+        if min_size is None:
+            min_size = MIN_IMAGE_SIZE
+        
         output_path = Path(output_folder)
         output_path.mkdir(parents=True, exist_ok=True)
         
@@ -632,8 +639,9 @@ class PDFExtractor:
                     colorspace = base_image.get("colorspace", 0)
                     bpc = base_image.get("bpc", 8)
                     
-                    # Skip tiny images (likely artifacts)
-                    if width < MIN_IMAGE_WIDTH or height < MIN_IMAGE_HEIGHT:
+                    # Skip tiny images (likely artifacts or icons)
+                    # Only skip if BOTH dimensions are below threshold
+                    if width < min_size and height < min_size:
                         continue
                     
                     # Generate filename
@@ -841,56 +849,122 @@ def insert_image_markers(content: str, images: List[Dict[str, Any]]) -> str:
     """
     Insert image reference markers into the extracted content.
     
-    Adds HTML comments indicating where images should appear. Since exact
-    positioning is difficult, images are grouped by page and listed at
-    page boundaries.
+    Attempts to place markers at approximate positions within the page content
+    based on the image's vertical position on the page. Images near the top
+    of a page appear early in that page's content, images near the bottom
+    appear later.
     
     Args:
         content: Extracted markdown content
         images: List of image metadata from extract_images()
     
     Returns:
-        Content with image markers inserted.
+        Content with image markers inserted at estimated positions.
     
     Note:
-        Markers are HTML comments so they don't affect rendering:
-        <!-- IMAGE: images/page001_img001.png (400x300px) -->
+        Position estimation is approximate. Claude should review and adjust
+        marker positions based on contextual clues in the text (e.g., 
+        "as shown in the diagram below" or "see figure above").
     """
     if not images:
         return content
     
-    # Group images by page
+    # Group images by page with position info
     images_by_page = {}
     for img in images:
         page = img["page"]
         if page not in images_by_page:
             images_by_page[page] = []
-        images_by_page[page].append(img)
+        
+        # Calculate relative vertical position (0.0 = top, 1.0 = bottom)
+        # Default to middle if position unknown
+        y_position = 0.5
+        if img.get("position") and len(img["position"]) >= 4:
+            # position is [x0, y0, x1, y1], y0 is top of image
+            # Assuming standard page height ~842 pts (A4)
+            y_position = img["position"][1] / 842.0
+            y_position = min(1.0, max(0.0, y_position))  # Clamp to 0-1
+        
+        images_by_page[page].append({
+            **img,
+            "y_position": y_position
+        })
     
-    # Build image marker strings for each page
+    # Sort images within each page by vertical position
+    for page in images_by_page:
+        images_by_page[page].sort(key=lambda x: x["y_position"])
+    
+    # Process content page by page
     lines = content.split('\n')
     result_lines = []
     current_page = 0
+    page_content_lines = []
+    in_page = False
     
     for line in lines:
-        result_lines.append(line)
-        
-        # Check if this is a page marker
+        # Detect page boundaries
         if line.startswith("<!-- PAGE ") and "START" in line:
+            # Starting a new page
             try:
-                page_num = int(line.split()[2])
-                current_page = page_num
-                
-                # Add image markers for this page
-                if page_num in images_by_page:
-                    result_lines.append("")
-                    result_lines.append(f"<!-- IMAGES ON PAGE {page_num}: -->")
-                    for img in images_by_page[page_num]:
-                        marker = f"<!-- IMAGE: {img['filename']} ({img['width']}x{img['height']}px) -->"
-                        result_lines.append(marker)
-                    result_lines.append("")
+                current_page = int(line.split()[2])
+                in_page = True
+                page_content_lines = []
+                result_lines.append(line)
+                continue
             except (ValueError, IndexError):
                 pass
+        
+        elif line.startswith("<!-- PAGE ") and "END" in line:
+            # Ending a page - insert images at estimated positions
+            if current_page in images_by_page and page_content_lines:
+                page_images = images_by_page[current_page]
+                total_lines = len(page_content_lines)
+                
+                # Calculate insertion points for each image
+                insertions = []  # [(line_index, marker_string), ...]
+                for img in page_images:
+                    # Map y_position (0-1) to line index
+                    line_idx = int(img["y_position"] * total_lines)
+                    line_idx = min(line_idx, total_lines - 1)
+                    
+                    # Create marker with position hint
+                    position_hint = "top" if img["y_position"] < 0.33 else \
+                                   "bottom" if img["y_position"] > 0.66 else "middle"
+                    marker = f"<!-- IMAGE: {img['filename']} ({img['width']}x{img['height']}px, {position_hint} of page) -->"
+                    insertions.append((line_idx, marker))
+                
+                # Sort insertions by line index (reverse to insert from bottom up)
+                insertions.sort(key=lambda x: x[0], reverse=True)
+                
+                # Insert markers into page content
+                for line_idx, marker in insertions:
+                    # Find a good insertion point (after a blank line or paragraph)
+                    insert_at = line_idx
+                    # Try to insert after a blank line for cleaner formatting
+                    for i in range(line_idx, min(line_idx + 3, total_lines)):
+                        if page_content_lines[i].strip() == '':
+                            insert_at = i + 1
+                            break
+                    
+                    page_content_lines.insert(insert_at, marker)
+                    page_content_lines.insert(insert_at + 1, '')
+            
+            # Add page content and end marker
+            result_lines.extend(page_content_lines)
+            result_lines.append(line)
+            in_page = False
+            page_content_lines = []
+            continue
+        
+        # Collect lines within a page, or pass through if outside pages
+        if in_page:
+            page_content_lines.append(line)
+        else:
+            result_lines.append(line)
+    
+    # Handle any remaining content (shouldn't happen with well-formed input)
+    if page_content_lines:
+        result_lines.extend(page_content_lines)
     
     return '\n'.join(result_lines)
 
@@ -1274,6 +1348,16 @@ Output:
     )
     
     parser.add_argument(
+        "--min-image-size",
+        type=int,
+        default=10,
+        metavar="PIXELS",
+        help="Minimum image dimension to extract (default: 10). "
+             "Images smaller than this in BOTH dimensions are skipped. "
+             "Use 100+ to skip icons/logos and only extract content images."
+    )
+    
+    parser.add_argument(
         "--version",
         action="version",
         version=f"%(prog)s {VERSION}"
@@ -1333,8 +1417,8 @@ Output:
             print(f"  - Fonts: {len(fonts)}")
             
             # Extract images
-            print("Extracting images...")
-            images = pdf.extract_images(str(images_folder))
+            print(f"Extracting images (min size: {args.min_image_size}px)...")
+            images = pdf.extract_images(str(images_folder), min_size=args.min_image_size)
             print(f"  - Images extracted: {len(images)}")
             
             # Remove images folder if empty
