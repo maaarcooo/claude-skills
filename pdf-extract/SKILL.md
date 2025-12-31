@@ -11,9 +11,11 @@ Extract PDF content to clean, organized markdown.
 
 1. **Extract** — Run script to get raw content + metadata
 2. **Analyse** — Review for patterns and issues
-3. **Clean** — Remove noise (footers, watermarks, branding)
+3. **Clean** — **Manually** remove noise (footers, watermarks, branding)
 4. **Organise** — Restructure fragmented content
 5. **Output** — Deliver clean markdown
+
+> **Note:** Only Step 1 uses a script. Steps 2–5 are performed manually by Claude reading and rewriting content. Do not write cleanup scripts.
 
 ## Step 1: Extract
 
@@ -61,7 +63,22 @@ cat /home/claude/extracted/{filename}.md
 
 ## Step 3: Clean
 
-Remove noise based on document type. Load references as needed:
+> **IMPORTANT: Manual cleanup only.**
+> - Do NOT write Python scripts to clean the content
+> - Do NOT use sed, awk, or regex replacement commands
+> - Do NOT copy-paste the raw content and run substitutions
+> 
+> Instead: Read the extracted content, understand it, then write a clean version from scratch, omitting the noise as you write.
+
+**Why manual?** Each PDF has unique patterns. Claude makes better contextual decisions than automated rules — knowing what's noise vs. legitimate content, handling edge cases, and preserving meaning.
+
+**Process:**
+1. Read through the extracted markdown completely
+2. Identify repeated noise (footers, headers, branding, page numbers)
+3. Note the actual content structure (sections, flow, key information)
+4. Write the clean output directly, skipping noise as you go
+
+Load references as needed for pattern recognition:
 
 **Repeated elements & source-specific patterns:**
 See [cleanup-patterns.md](references/cleanup-patterns.md)
@@ -80,6 +97,8 @@ See [image-handling.md](references/image-handling.md)
 - Use when: document contains images to process
 
 ## Step 4: Organise
+
+While writing the clean output, apply these formatting principles:
 
 ### Heading Hierarchy
 
@@ -108,6 +127,29 @@ View each image with `view` tool to write accurate alt text.
 
 ## Step 5: Output
 
+### Write Clean File
+
+After reading and mentally processing the extracted content, write the clean markdown directly to a file:
+
+```bash
+# Write clean content to file (Claude creates this content)
+cat > /mnt/user-data/outputs/{filename}_clean.md << 'EOF'
+# Document Title
+
+[Clean content goes here - written by Claude, not copied]
+
+EOF
+```
+
+Or use the `create_file` tool to write the clean content directly.
+
+### Copy Images (if applicable)
+
+```bash
+mkdir -p /mnt/user-data/outputs/images/
+cp -r /home/claude/extracted/images/* /mnt/user-data/outputs/images/
+```
+
 ### Quality Check
 
 - [ ] No repeated footers/headers
@@ -117,20 +159,6 @@ View each image with `view` tool to write accurate alt text.
 - [ ] Tables intact and readable
 - [ ] Images converted to markdown syntax
 - [ ] Heading hierarchy logical
-
-### Save Files
-
-**With images:**
-```bash
-mkdir -p /mnt/user-data/outputs/images/
-cp /home/claude/cleaned.md /mnt/user-data/outputs/{filename}_clean.md
-cp -r /home/claude/extracted/images/* /mnt/user-data/outputs/images/
-```
-
-**Without images:**
-```bash
-cp /home/claude/cleaned.md /mnt/user-data/outputs/{filename}_clean.md
-```
 
 ### Summary to User
 
