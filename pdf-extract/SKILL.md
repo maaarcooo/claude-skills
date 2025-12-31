@@ -213,19 +213,95 @@ If a table is split across pages, merge the rows into a single table.
 
 ### 4.4 Handle Images
 
-If images were extracted, reference them appropriately:
+If images were extracted (check `total_images` in YAML header), handle them properly:
+
+#### 4.4.1 View Extracted Images
+
+Use the `view` tool to see each image and understand its content:
+
+```bash
+# List extracted images
+ls /home/claude/extracted/images/
+
+# View an image (Claude can see it visually)
+view /home/claude/extracted/images/page001_img001.png
+```
+
+#### 4.4.2 Convert Markers to Proper Markdown
+
+Replace HTML comment markers with proper markdown image syntax:
 
 ```markdown
 <!-- Raw extraction marker -->
 <!-- IMAGE: images/page001_img001.png (400x300px) -->
 
 <!-- Clean version - convert to proper markdown image -->
-![Figure 1: Description](./images/page001_img001.png)
+![Figure 1: Diagram showing the relationship between voltage and current](./images/page001_img001.png)
 ```
 
-- Add descriptive alt text based on context
-- Number figures sequentially
-- Place images near their relevant text
+#### 4.4.3 Write Descriptive Alt Text
+
+After viewing each image, write meaningful alt text that:
+- Describes what the image shows (diagrams, graphs, photos, equations)
+- Captures key information visible in the image
+- Helps readers who cannot see the image understand its content
+
+**Examples:**
+```markdown
+![Figure 1: Graph showing exponential decay of radioactive isotope over time](./images/page001_img001.png)
+
+![Figure 2: Circuit diagram with resistor R1 in series with capacitor C1](./images/page002_img001.png)
+
+![Table 1: Comparison of properties for different materials](./images/page003_img001.png)
+```
+
+#### 4.4.4 Position Images Correctly
+
+- Place images near the text that references them
+- If the original position is unclear, place after the paragraph that introduces the concept
+- For figures referenced by number ("see Figure 3"), ensure numbering matches
+
+#### 4.4.5 Copy Images to Output
+
+**Important:** When saving the final markdown, also copy the images folder:
+
+```bash
+# Create output structure
+mkdir -p /mnt/user-data/outputs/images/
+
+# Copy cleaned markdown
+cp /home/claude/cleaned_document.md /mnt/user-data/outputs/
+
+# Copy all images
+cp -r /home/claude/extracted/images/* /mnt/user-data/outputs/images/
+```
+
+The final output structure should be:
+```
+/mnt/user-data/outputs/
+├── document.md           # Clean markdown with image references
+└── images/               # All extracted images
+    ├── page001_img001.png
+    ├── page002_img001.png
+    └── ...
+```
+
+#### 4.4.6 Alternative: Embed Images as Base64 (Single File)
+
+If user prefers a single self-contained file, images can be embedded as base64:
+
+```markdown
+![Figure 1: Description](data:image/png;base64,iVBORw0KGgo...)
+```
+
+However, this significantly increases file size. Only use if specifically requested.
+
+#### 4.4.7 Handle Missing or Corrupt Images
+
+If an image fails to extract or appears corrupt:
+- Note it in the output: `[Image could not be extracted]`
+- Check `metadata.json` for image extraction errors
+- Inform user which images were problematic
 
 ## Step 5: Output Clean Markdown
 
@@ -260,21 +336,36 @@ Before delivering to user, verify:
 - [ ] Headings follow logical hierarchy
 - [ ] Lists are properly formatted
 - [ ] Tables are intact and readable
-- [ ] Images are properly referenced
+- [ ] **Images: All markers converted to proper markdown syntax**
+- [ ] **Images: Alt text is descriptive and accurate**
+- [ ] **Images: Images folder copied to outputs (if applicable)**
+- [ ] **Images: Relative paths are correct (`./images/filename.png`)**
 - [ ] Overall flow is coherent and readable
 
 ### 5.3 Save and Present
 
-Save cleaned markdown to outputs:
-
+**If document has images:**
 ```bash
-cp /home/claude/cleaned_document.md /mnt/user-data/outputs/
+# Create output directory with images
+mkdir -p /mnt/user-data/outputs/images/
+
+# Copy cleaned markdown
+cp /home/claude/cleaned_document.md /mnt/user-data/outputs/{filename}_clean.md
+
+# Copy images folder
+cp -r /home/claude/extracted/images/* /mnt/user-data/outputs/images/
+```
+
+**If document has no images:**
+```bash
+cp /home/claude/cleaned_document.md /mnt/user-data/outputs/{filename}_clean.md
 ```
 
 Present to user with brief summary of:
 - What was extracted (pages, images)
 - What was cleaned (types of noise removed)
 - Any issues or limitations noted
+- If images included, remind user the `images/` folder is required for images to display
 
 ## Special Cases
 
@@ -333,16 +424,31 @@ cat /home/claude/extracted/Physics_Chapter_5.md
 #    - "Your notes" appears 12 times  
 #    - Page numbers 1-12 appear standalone
 #    - www.savemyexams.com appears in footer
+#    - 3 images extracted
 
-# 4. Clean content (mentally or via string operations):
+# 4. If images exist, view them to write alt text
+view /home/claude/extracted/images/page002_img001.png
+# (Claude sees: diagram of electric circuit with battery and resistors)
+
+view /home/claude/extracted/images/page005_img001.png
+# (Claude sees: graph of voltage vs current)
+
+# 5. Clean content:
 #    - Remove all SME branding
 #    - Remove "Your notes" sections
 #    - Remove standalone page numbers
 #    - Rejoin split paragraphs
+#    - Convert image markers to proper markdown with alt text:
+#      ![Figure 1: Electric circuit with battery and two resistors in series](./images/page002_img001.png)
+#      ![Figure 2: Linear graph showing voltage vs current relationship (Ohm's Law)](./images/page005_img001.png)
 
-# 5. Output clean version
-# Save to /mnt/user-data/outputs/Physics_Chapter_5_clean.md
+# 6. Output clean version with images
+mkdir -p /mnt/user-data/outputs/images/
+# Save cleaned markdown to /mnt/user-data/outputs/Physics_Chapter_5_clean.md
+cp -r /home/claude/extracted/images/* /mnt/user-data/outputs/images/
 ```
 
 **Summary to user:**
-> Extracted and cleaned 12 pages from Physics_Chapter_5.pdf. Removed Save My Exams branding, page numbers, and "Your notes" placeholders. The content is now clean markdown with proper heading structure.
+> Extracted and cleaned 12 pages from Physics_Chapter_5.pdf. Removed Save My Exams branding, page numbers, and "Your notes" placeholders. Included 3 figures with descriptive captions. The content is now clean markdown with proper heading structure.
+> 
+> **Note:** The `images/` folder contains the extracted figures — keep it alongside the markdown file for images to display correctly.
