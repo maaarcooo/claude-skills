@@ -1,6 +1,8 @@
 # Table Formatting Reference
 
-Fixes for common table extraction issues from pymupdf4llm.
+Fixes for common table extraction issues when manually rewriting clean content.
+
+> **Usage:** When you encounter malformed tables in the raw extraction, reconstruct them properly in your clean output. Do not script table repairs.
 
 ## Contents
 
