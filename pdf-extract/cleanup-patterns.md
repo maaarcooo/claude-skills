@@ -1,13 +1,26 @@
-# Content Cleanup Patterns
+# Cleanup Patterns Reference
 
-Reference for identifying and removing noise from extracted PDF content.
+Patterns for removing noise from extracted PDF content.
 
-## Repeated Elements
+## Contents
 
-Identify text appearing 3+ times or at consistent positions (page start/end).
+- [Repeated Element Detection](#repeated-element-detection)
+- [Non-Content Elements](#non-content-elements)
+- [Source-Specific Patterns](#source-specific-patterns)
+- [Text Artifact Fixes](#text-artifact-fixes)
 
-### Common Footer Patterns
+---
 
+## Repeated Element Detection
+
+Identify text appearing on multiple pages (footers, headers, watermarks):
+
+**Detection rules:**
+1. Identical or near-identical text appearing 3+ times
+2. Text at consistent positions (start/end of page markers)
+3. Patterns with incrementing numbers (page counters)
+
+**Common footer patterns:**
 ```
 © {Year} {Company Name}
 www.{domain}.com
@@ -16,23 +29,24 @@ All rights reserved
 {Company} - {Product Line}
 ```
 
-### Common Header Patterns
-
+**Common header patterns:**
 ```
-{Document Title} — repeated at top of each page
-{Chapter/Section Name} — repeated headers
+{Document Title} — repeated at top
+{Chapter/Section Name} — repeated
 {Company Logo Text}
 ```
+
+---
 
 ## Non-Content Elements
 
 **Always remove:**
-- Standalone page numbers (lines containing only "5" or "Page 5")
-- Table of contents page references ("Chapter 1 .................. 5")
-- "Your notes" or blank placeholder sections
+- Standalone page numbers (`5`, `Page 5`, `**5**`)
+- TOC page references (`Chapter 1 .................. 5`)
+- "Your notes" placeholder sections
 - Navigation instructions ("Click here", "See page X")
 - Print/download prompts
-- Social media links and handles
+- Social media links
 - QR code references
 - Subscription/signup prompts
 
@@ -42,15 +56,17 @@ All rights reserved
 - Disclaimer boilerplate
 - Terms and conditions references
 
+---
+
 ## Source-Specific Patterns
 
 ### Save My Exams (SME)
 
 ```
-© Save My Exams – [content continues]
+© Save My Exams – AI Powered Revision Notes...
 Get more and ace your exams at savemyexams.com
 Your notes
-[savemyexams.com](...)
+[savemyexams.com](https://www.savemyexams.com)
 **{page_number}**
 ```
 
@@ -61,7 +77,7 @@ https://bit.ly/pmt-cc
 https://bit.ly/pmt-edu
 www.pmt.education
 This work by PMT Education is licensed under CC BY-NC-ND 4.0
-________________________________________  (decorative lines)
+________________________________________ (decorative lines)
 ```
 
 ### Generic Educational Material
@@ -73,28 +89,26 @@ PREVIEW ONLY
 Answer key on page {N}
 ```
 
-## Text Artifacts
+---
 
-### Hyphenation Issues
+## Text Artifact Fixes
 
-| Pattern | Fix |
-|---------|-----|
+### Hyphenation
+
+| Before | After |
+|--------|-------|
 | `~~-~~` | `-` |
 | `~~−~~` | `−` |
 | `con-\ntinue` | `continue` |
 
-### Character Issues
+### Special Characters
 
-| Pattern | Action |
-|---------|--------|
-| Zero-width spaces (`\u200b`, `\u200c`, `\u200d`, `\ufeff`) | Remove |
-| Multiple spaces | Single space |
-| Tab characters in running text | Single space |
+Remove zero-width spaces: `\u200b`, `\u200c`, `\u200d`, `\ufeff`
 
-### Whitespace Issues
+### Whitespace
 
-| Pattern | Fix |
-|---------|-----|
-| 4+ consecutive blank lines | 2 blank lines max |
+| Issue | Fix |
+|-------|-----|
+| 4+ consecutive blank lines | Max 2 blank lines |
 | Trailing whitespace | Remove |
-| Leading whitespace (non-intentional) | Remove |
+| Multiple spaces | Single space |
