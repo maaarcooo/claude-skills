@@ -1,6 +1,8 @@
 # Image Handling Reference
 
-Guide for processing extracted images from PDFs.
+Guide for processing extracted images when writing clean markdown output.
+
+> **Usage:** View images, write descriptive alt text, and place them appropriately in your clean output. The only scripted step is copying the images folder to outputs.
 
 ## Contents
 
