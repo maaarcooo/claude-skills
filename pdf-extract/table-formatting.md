@@ -1,6 +1,16 @@
-# Table Formatting Fixes
+# Table Formatting Reference
 
-Reference for fixing malformed tables from PDF extraction.
+Fixes for common table extraction issues from pymupdf4llm.
+
+## Contents
+
+- [Misaligned Columns](#misaligned-columns)
+- [Missing Delimiters](#missing-delimiters)
+- [Tables as Plain Text](#tables-as-plain-text)
+- [Merged Cell Issues](#merged-cell-issues)
+- [Repeated Headers](#repeated-headers)
+
+---
 
 ## Misaligned Columns
 
@@ -11,36 +21,47 @@ Reference for fixing malformed tables from PDF extraction.
 | id | INT | Primary key |
 | name | VARCHAR(50) | User's full name which may be quite long |
 
-<!-- After -->
+<!-- After (optional cleanup for readability) -->
 | Field | Type        | Description                              |
 |-------|-------------|------------------------------------------|
 | id    | INT         | Primary key                              |
 | name  | VARCHAR(50) | User's full name which may be quite long |
 ```
 
-## Missing Cell Delimiters
+---
+
+## Missing Delimiters
 
 ```markdown
-<!-- Before -->
+<!-- Before: broken structure -->
 | Method | Description
 |--------|------------
 | GET | Retrieve data
 | POST Submit data
 
-<!-- After -->
+<!-- After: fixed -->
 | Method | Description   |
 |--------|---------------|
 | GET    | Retrieve data |
 | POST   | Submit data   |
 ```
 
-## Table Converted to Plain Text
+---
 
-If a complex table was extracted as jumbled text:
-1. Identify the data structure from context
-2. Reconstruct as a proper markdown table
-3. Or use definition list for simple key-value data:
+## Tables as Plain Text
 
+When complex tables extract as jumbled text, reconstruct or convert:
+
+**Option 1: Rebuild as table**
+```markdown
+| Name  | Type        | Description      |
+|-------|-------------|------------------|
+| id    | INT         | Primary key      |
+| name  | VARCHAR(50) | User's full name |
+| email | VARCHAR(100)| Contact email    |
+```
+
+**Option 2: Convert to definition list**
 ```markdown
 **Field definitions:**
 - **id**: INT - Primary key
@@ -48,49 +69,49 @@ If a complex table was extracted as jumbled text:
 - **email**: VARCHAR(100) - Contact email
 ```
 
-## Merged Cells Extracted Incorrectly
+Use definition lists when table format doesn't fit well.
 
-Options for tables with spanning cells:
+---
+
+## Merged Cell Issues
+
+Tables with spanning cells often extract poorly.
+
+**Options:**
 1. Split into separate simple tables
-2. Add notes explaining the relationship
-3. Convert to nested lists if clearer
-
-## Duplicate Headers (Page Break)
+2. Add notes explaining relationships
+3. Convert to nested lists
 
 ```markdown
-<!-- Before -->
-| Name | Type |
-|------|------|
-| id | INT |
-| Name | Type |
+<!-- Complex table with spans → simplified -->
+
+**Input Devices:**
+- Keyboard, Mouse, Scanner
+
+**Output Devices:**
+- Monitor, Printer, Speakers
+
+**Storage Devices:**
+- HDD, SSD, USB Drive
+```
+
+---
+
+## Repeated Headers
+
+Tables split across pages may have duplicate headers:
+
+```markdown
+<!-- Before: header appears twice -->
+| Name  | Type |
+|-------|------|
+| id    | INT  |
+| Name  | Type |
 | email | VARCHAR |
 
-<!-- After -->
+<!-- After: remove duplicate -->
 | Name  | Type    |
 |-------|---------|
 | id    | INT     |
 | email | VARCHAR |
-```
-
-## Split Tables Across Pages
-
-```markdown
-<!-- Before: table split with header repeated -->
-| Name | Type |
-|------|------|
-| id | INT |
-| name | VARCHAR |
-
-| Name | Type |
-|------|------|
-| email | VARCHAR |
-| created | DATE |
-
-<!-- After: merged into single table -->
-| Name    | Type    |
-|---------|---------|
-| id      | INT     |
-| name    | VARCHAR |
-| email   | VARCHAR |
-| created | DATE    |
 ```
