@@ -210,4 +210,4 @@ This repository uses unified versioning. All skills share a single version numbe
 
 ## License
 
-MIT
+This work is licensed under [CC BY 4.0](https://creativecommons.org/licenses/by/4.0/) - you're free to share and adapt with attribution.
