@@ -30,6 +30,7 @@ What is [term]? | [definition]
 
 ## Output Format
 
+**File naming**: Name the output file after the source file (e.g., `Physics_Chapter_5.pdf` → `Physics_Chapter_5.txt`)
 ```
 Question | Answer
 ```
