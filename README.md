@@ -77,6 +77,8 @@ The primary skill for extracting PDF content to clean, organized markdown format
 
 ### Anki Flashcard Generator
 
+> **Source:** Converted from prompts in [LLM-Custom-Instructions](https://github.com/maaarcooo/LLM-Custom-Instructions)
+
 Generate study flashcards from PDF or Markdown content in Anki-importable format.
 
 **Trigger:** Only when "Anki flashcard" or "Anki deck" is explicitly mentioned.
@@ -105,6 +107,8 @@ Define specific heat capacity | The energy required to raise the temperature of 
 ---
 
 ### Revision Notes Generator
+
+> **Source:** Converted from prompts in [LLM-Custom-Instructions](https://github.com/maaarcooo/LLM-Custom-Instructions)
 
 Generate concise, accurate revision notes from PDF or Markdown content.
 
