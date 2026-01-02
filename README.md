@@ -13,8 +13,13 @@ This repository contains specialized skills that enable Claude to process docume
 | [extracting-pdfs](#extracting-pdfs) | Extract and clean PDF content to markdown | Active |
 | [anki-flashcard-generator](#anki-flashcard-generator) | Generate Anki-importable flashcard decks | Active |
 | [revision-notes-generator](#revision-notes-generator) | Create concise revision notes from study materials | Active |
-| [pdf-extract](#pdf-extract) | PDF extraction (development version) | Development |
-| [pdf-to-markdown-converter](#pdf-to-markdown-converter) | Legacy PDF conversion | Deprecated |
+
+### Archived Skills
+
+| Skill | Purpose | Status |
+|-------|---------|--------|
+| [pdf-extract](#pdf-extract) | PDF extraction (development version) | Archived |
+| [pdf-to-markdown-converter](#pdf-to-markdown-converter) | Legacy PDF conversion | Archived |
 
 ## Project Structure
 
@@ -31,15 +36,16 @@ claude-skills/
 │   └── SKILL.md
 ├── revision-notes-generator/           # Revision notes generation skill
 │   └── SKILL.md
-├── pdf-extract/                        # PDF extraction (development version)
-│   ├── SKILL.md
-│   ├── extract_pdf.py                  # Core Python extraction script
-│   ├── cleanup-patterns.md
-│   ├── image-handling.md
-│   ├── sentence-reflow.md
-│   └── table-formatting.md
-└── pdf-to-markdown-converter/          # Legacy skill (Deprecated)
-    └── SKILL.md
+└── archive/                            # Archived/legacy skills
+    ├── pdf-extract/                    # PDF extraction (development version)
+    │   ├── SKILL.md
+    │   ├── extract_pdf.py              # Core Python extraction script
+    │   ├── cleanup-patterns.md
+    │   ├── image-handling.md
+    │   ├── sentence-reflow.md
+    │   └── table-formatting.md
+    └── pdf-to-markdown-converter/      # Legacy skill (Deprecated)
+        └── SKILL.md
 ```
 
 ## Skills
@@ -124,7 +130,15 @@ Generate concise, accurate revision notes from PDF or Markdown content.
 
 ---
 
+## Archived Skills
+
+The following skills have been moved to the `archive/` folder. They are preserved for reference but are no longer actively maintained.
+
+---
+
 ### PDF Extract
+
+> **Location:** `archive/pdf-extract/`
 
 The development/original version of the PDF extraction skill. Contains the core Python extraction script.
 
@@ -139,6 +153,8 @@ The development/original version of the PDF extraction skill. Contains the core 
 ---
 
 ### PDF to Markdown Converter
+
+> **Location:** `archive/pdf-to-markdown-converter/`
 
 The original PDF conversion skill using visual PDF understanding.
 
