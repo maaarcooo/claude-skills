@@ -10,9 +10,10 @@ Generate study flashcards from PDF or Markdown content in Anki-importable format
 ## Process
 
 1. Read the source file (PDF or Markdown) thoroughly
-2. Identify all key content: **bolded terms**, highlighted text, and Higher Tier material
-3. Generate flashcards covering all essential topic content
-4. Output as text file: one card per line, format `Question | Answer`
+2. Verify accuracy of all information in the source — correct any errors
+3. Identify all key content: **bolded terms**, highlighted text, and Higher Tier material
+4. Generate flashcards covering all essential topic content
+5. Output as text file: one card per line, format `Question | Answer`
 
 ## Card Design Rules
 
