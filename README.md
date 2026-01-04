@@ -145,6 +145,12 @@ Generate concise, accurate revision notes from PDF or Markdown content.
 
 **Output Format:** Markdown with title, section headings, bold key terms, and equations in code blocks.
 
+**Sample prompt to use the skill:**
+
+```
+Use "revision-notes-generator" skill to create revision notes of the study materials.
+```
+
 ---
 
 ## Archived Skills
