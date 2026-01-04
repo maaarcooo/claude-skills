@@ -73,7 +73,7 @@ The primary skill for extracting PDF content to clean, organized markdown format
 - Rich metadata extraction (YAML frontmatter + JSON)
 - Reference guides for handling common extraction challenges
 
-**How to use:**
+**Prompt:**
 
 ```
 <pathname>
