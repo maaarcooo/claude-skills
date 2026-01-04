@@ -73,7 +73,7 @@ The primary skill for extracting PDF content to clean, organized markdown format
 - Rich metadata extraction (YAML frontmatter + JSON)
 - Reference guides for handling common extraction challenges
 
-**Prompt:**
+**Sample prompt to use the skill:**
 
 ```
 <pathname>
@@ -111,7 +111,7 @@ What is the unit of electrical resistance? | Ohm (Ω)
 Define specific heat capacity | The energy required to raise the temperature of 1 kg of a substance by 1°C
 ```
 
-**Prompt:**
+**Sample prompt to use the skill:**
 
 ```
 Use "anki-flashcard-generator" skill to create an Anki flashcard deck of the study materials.
