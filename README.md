@@ -111,6 +111,12 @@ What is the unit of electrical resistance? | Ohm (Ω)
 Define specific heat capacity | The energy required to raise the temperature of 1 kg of a substance by 1°C
 ```
 
+**Prompt:**
+
+```
+Use "anki-flashcard-generator" skill to create an Anki flashcard deck of the study materials.
+```
+
 ---
 
 ### Revision Notes Generator
