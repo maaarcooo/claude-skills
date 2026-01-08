@@ -151,6 +151,10 @@ Generate concise, accurate revision notes from PDF or Markdown content.
 Use "revision-notes-generator" skill to create revision notes of the study materials.
 ```
 
+```
+Use "revision-notes-generator" skill to create revision notes of the study materials with title "<title>".
+```
+
 ---
 
 ## Archived Skills
