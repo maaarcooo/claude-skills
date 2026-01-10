@@ -36,6 +36,8 @@ Markdown file with:
 - Equations/formulas in code blocks or LaTeX where appropriate
 - Concise bullet points or short paragraphs
 
+**Exclude**: Specification/syllabus reference codes (e.g., "1.1.3 a)", "1.1.3 b)"). These clutter the notes — focus only on the actual knowledge content.
+
 ## Example Structure
 
 ```markdown
@@ -65,3 +67,4 @@ Core explanation in concise form.
 - [ ] Information verified for accuracy
 - [ ] No unnecessary repetition
 - [ ] Clear logical structure
+- [ ] No specification reference codes included
