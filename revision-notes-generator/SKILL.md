@@ -25,6 +25,8 @@ Generate concise, accurate revision notes from PDF or Markdown content in markdo
 
 **Structured**: Use clear headings and logical organisation. Group related concepts.
 
+**Clean**: No clutter — exclude specification codes, redundant headers, or formatting artefacts from the source.
+
 **Higher Tier**: Clearly include all Higher Tier content — optionally mark with (HT) if helpful.
 
 ## Output Format
