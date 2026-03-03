@@ -111,11 +111,19 @@ What is the unit of electrical resistance? | Ohm (Ω)
 Define specific heat capacity | The energy required to raise the temperature of 1 kg of a substance by 1°C
 ```
 
-**Sample prompt to use the skill:**
+**Sample prompt to use the skill in claude.ai:**
 
 ```
-Use "anki-flashcard-generator" skill to create an Anki flashcard deck of the study materials.
+Use "anki-flashcard-generator" skill to create a flashcard deck of the study materials.
 Output as a text file, one flashcard per line: Question | Answer
+Name the output file after the source file (e.g., Physics_Chapter_5.pdf → Physics_Chapter_5.txt)
+```
+**Sample user prompt to use the skill in Claude API:**
+```
+Use "anki-flashcard-generator" skill to create a flashcard deck of the study materials.
+Output only the flashcard lines in the format "Question | Answer", one per line.
+Do not include any preamble, headers, explanations, markdown formatting,
+or code fences. The raw output will be saved directly to a text file.
 ```
 
 ---
