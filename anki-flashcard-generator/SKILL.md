@@ -1,6 +1,6 @@
 ---
 name: anki-flashcard-generator
-description: Generate Anki flashcard decks from PDF or Markdown study materials. Use only when "Anki flashcard" or "Anki deck" is explicitly mentioned. Do not trigger for generic flashcard requests. Outputs in Anki-importable text format (Question | Answer).
+description: Generate Anki flashcard decks from PDF or Markdown study materials. Use only when "Anki flashcard" or "Anki deck" is explicitly mentioned. Do not trigger for generic flashcard requests. Outputs in Anki-importable format (Question | Answer).
 ---
 
 # Anki Flashcard Generator
@@ -14,7 +14,7 @@ Generate study flashcards from PDF or Markdown content in Anki-importable format
 3. Identify all key content: **bolded terms**, highlighted text, and Higher Tier material
 4. Generate flashcards covering all essential topic content, selecting the most effective card type for each piece of knowledge (see Card Types below)
 5. Run the interference check: scan the full card set for confusable pairs and add discriminative cards where needed
-6. Output as text file: one card per line, format `Question | Answer`
+6. Format output as one card per line: `Question | Answer`
 
 ## Core Design Principles
 
@@ -197,7 +197,7 @@ Do not pad with trivial or redundant cards. Every card should earn its place in 
 
 ## Output Format
 
-**File naming**: Name the output file after the source file (e.g., `Physics_Chapter_5.pdf` → `Physics_Chapter_5.txt`)
+One card per line, question and answer separated by a pipe:
 
 ```
 Question | Answer
