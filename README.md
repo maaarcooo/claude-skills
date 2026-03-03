@@ -115,6 +115,7 @@ Define specific heat capacity | The energy required to raise the temperature of 
 
 ```
 Use "anki-flashcard-generator" skill to create an Anki flashcard deck of the study materials.
+Output as a text file, one flashcard per line: Question | Answer
 ```
 
 ---
