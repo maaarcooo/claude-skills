@@ -144,8 +144,7 @@ How does electrical conduction differ between metals and semiconductors? | In me
 
 ```
 Use "anki-flashcard-generator" skill to create an Anki flashcard deck of the study materials.
-Output the flashcards as a text file.
-Name the file after the source file (e.g., Physics_Chapter_5.pdf → Physics_Chapter_5.txt).
+Output the flashcards as a text file. Name the file after the source file (e.g., Physics_Chapter_5.pdf → Physics_Chapter_5.txt).
 ```
 **Sample user prompt to use the skill in Claude API:**
 ```
