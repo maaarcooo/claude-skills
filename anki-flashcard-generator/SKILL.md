@@ -208,9 +208,5 @@ Why does a metal spoon feel colder than a wooden spoon at the same temperature? 
 - [ ] All bolded/highlighted terms covered with both forward and reverse cards
 - [ ] Higher Tier content included
 - [ ] Every card tests exactly one atomic fact or one reasoning chain (no multi-fact cards)
-- [ ] Questions require production, not recognition (no yes/no or true/false)
-- [ ] Confusable pairs identified and covered by dedicated compare/contrast cards
 - [ ] No diagram-dependent or multi-step calculation questions
-- [ ] Factual content from diagrams/visuals in the source extracted into text-based cards
-- [ ] Every question has exactly one unambiguous correct answer
 - [ ] Clear, concise phrasing throughout (target under 25 words for factual answers)
