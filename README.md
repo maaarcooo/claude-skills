@@ -86,7 +86,7 @@ Use "extracting-pdfs" skill to convert this pdf into a markdown file.
 
 > **Source:** Converted from [anki-flashcard/prompt-v4.txt](https://github.com/maaarcooo/llm-custom-instructions/blob/main/anki-flashcard/prompt-v4.txt)
 
-Generate study flashcards from PDF or Markdown content in Anki-importable format. Card design follows evidence-based principles from cognitive psychology and neuroscience research to optimize active recall and long-term retention under spaced repetition scheduling.
+Generate study flashcards from PDF or Markdown content in Anki-importable format. Card design follows evidence-based principles to optimize active recall and long-term retention under spaced repetition scheduling.
 
 **Trigger:** Only when "Anki flashcard" or "Anki deck" is explicitly mentioned.
 
@@ -123,7 +123,6 @@ Generate study flashcards from PDF or Markdown content in Anki-importable format
 - **Unambiguous**: Each question must have exactly one correct answer
 - **Bidirectional**: Both forward and reverse cards for key definitions
 - **Interference management**: Dedicated compare/contrast cards for confusable pairs
-- **Leech prevention**: Address root causes (atomicity violations, ambiguity, missing understanding) rather than letting cards become leeches
 - **Exclusions**: No diagram-dependent questions, multi-step calculations, yes/no questions, or cards listing more than 3 items
 
 **Coverage Guidance:** Prioritise content by examinability — definitions, laws, key equations, and explain/justify points first; supplementary context and edge cases only if the source emphasises them.
