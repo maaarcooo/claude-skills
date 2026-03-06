@@ -5,7 +5,7 @@ description: Generate Anki flashcard decks from PDF or Markdown study materials.
 
 # Anki Flashcard Generator
 
-Generate study flashcards from PDF or Markdown content in Anki-importable format. Card design follows evidence-based principles from cognitive psychology and neuroscience research to optimize active recall and long-term retention under spaced repetition scheduling.
+Generate study flashcards from PDF or Markdown content in Anki-importable format. Card design follows evidence-based principles to optimize active recall and long-term retention under spaced repetition scheduling.
 
 ## Process
 
@@ -28,29 +28,25 @@ Never create cards for content the learner has not yet studied or that the sourc
 
 Each card tests exactly one atomic piece of knowledge. This is the single highest-impact design decision.
 
-**Why it matters for SRS:** Anki's scheduling algorithm models each card as having a single forgetting curve. A card that tests multiple facts is a superposition of multiple curves decaying at different rates, producing a flattened, non-exponential curve that no algorithm can optimally schedule. When the learner lapses, the algorithm cannot identify which sub-fact was forgotten, so it resets the entire card. Research shows poorly formulated multi-fact cards can require up to 300% more repetitions than well-formulated atomic cards.
-
 **Target:** Each card should be answerable in under 6 seconds during review. If a card regularly takes longer, it likely violates atomicity and should be split.
 
 ### 3. Production over recognition
 
-Cards must require the learner to produce an answer from memory, not merely recognize it. This exploits the testing effect (meta-analytic effect size d = 0.50-0.61), where retrieving information strengthens memory traces far more than re-reading. Free-recall and cloze formats engage deeper prefrontal-hippocampal encoding circuits than recognition formats.
+Cards must require the learner to produce an answer from memory, not merely recognize it. Retrieving information strengthens memory far more than re-reading.
 
 **In practice:** Avoid yes/no or true/false questions. Frame cards so the answer must be generated, not selected. A card like "Is copper a good conductor? | Yes" is weak. Prefer: "Name a metal that is a good electrical conductor | Copper" or "Why is copper used for electrical wiring? | Copper has low resistivity because its outer electron is weakly bound and moves freely as a delocalised charge carrier."
 
 ### 4. Depth of processing
 
-Cards that require semantic reasoning produce 2-3x the retention of cards testing surface-level facts. Wherever possible, frame questions using "why," "how," or "explain" to force elaborative processing rather than rote retrieval. This is especially valuable for exam preparation, where explain/justify questions carry the most marks.
+Wherever possible, frame questions using "why," "how," or "explain" to force elaborative processing rather than rote retrieval. This is especially valuable for exam preparation, where explain/justify questions carry the most marks.
 
 ### 5. Dual coding
 
-<!-- DISABLED: Do not output #image-candidate tags or any visual annotations in the generated cards. The output is directly imported into Anki and must be clean Question | Answer lines with no metadata. The existing exclusion rule ("do not create questions that depend on interpreting a diagram or visual to answer") still applies. This principle is retained here as design rationale only — the learner may choose to attach images manually in Anki after import. -->
-
-Combining verbal and visual encoding creates two independent retrieval pathways, exploiting the picture superiority effect. When the source contains diagrams, graphs, or spatial information, extract all factual content from them and convert it into text-based cards. The learner may later attach images to these cards manually in Anki, but the generated output must not include image tags, comments, or any markup beyond the standard `Question | Answer` format.
+When the source contains diagrams, graphs, or spatial information, extract all factual content from them and convert it into text-based cards. The learner may later attach images to these cards manually in Anki, but the generated output must not include image tags, comments, or any markup beyond the standard `Question | Answer` format.
 
 ### 6. Personal connection and self-reference
 
-Where the content allows, frame cards using concrete, relatable scenarios rather than abstract statements. Connecting knowledge to tangible situations activates richer encoding networks and improves recall. This is particularly useful for "explain" cards where a real-world application can serve as the prompt.
+Where the content allows, frame cards using concrete, relatable scenarios rather than abstract statements. This is particularly useful for "explain" cards where a real-world application can serve as the prompt.
 
 ```
 Why does a metal spoon feel colder than a wooden spoon at the same temperature? | Metal has higher thermal conductivity, so it transfers thermal energy away from your hand faster, producing a greater rate of heat loss
@@ -82,7 +78,7 @@ Why does [X] lead to [Y]? | [mechanism/reasoning]
 
 ### Cloze-style cards
 
-For facts embedded in context where the surrounding sentence provides a natural retrieval cue. Cloze deletion exploits the generation effect (meta-analytic d = 0.40): producing a missing word from context engages broader neural encoding than simple Q&A. It also dramatically speeds card creation for dense factual material.
+For facts embedded in context where the surrounding sentence provides a natural retrieval cue. Useful for dense factual material.
 
 **Rules for cloze cards:**
 - Delete exactly one semantically critical keyword per card. Deleting function words or words recoverable from grammar alone produces trivial pattern-matching, not genuine recall.
@@ -141,7 +137,7 @@ Newton's three laws: 1) [...], 2) F = ma, 3) Action-reaction | An object remains
 
 ### Conciseness
 
-Use simple, direct language. Strip unnecessary words. Short answers are easier to self-assess during review ("Did I get it right?"), and reduce the temptation to passively read rather than actively recall. Aim for answers under 25 words for factual cards. Explain cards may be longer but should still be as concise as the reasoning chain allows.
+Use simple, direct language. Strip unnecessary words. Short answers are easier to self-assess during review. Aim for answers under 25 words for factual cards. Explain cards may be longer but should still be as concise as the reasoning chain allows.
 
 ### Unambiguous phrasing
 
@@ -163,16 +159,6 @@ Common high-interference situations:
 - Quantities with the same units but different meanings
 - Processes that share steps but diverge at a key point
 - Formulas with similar structure (e.g., Ek = ½mv² vs E = mc²)
-
-### Leech prevention through card design
-
-A leech is a card that is repeatedly forgotten despite multiple reviews. Most leeches are caused by poor card design, not inherently difficult content. Before a card becomes a leech, address the root cause:
-
-- **Violates atomicity** → Split into smaller cards
-- **Ambiguous question** → Rephrase to have exactly one clear answer
-- **Interference with another card** → Add a discriminative comparison card
-- **No understanding behind it** → The learner needs to study the concept before memorising it; this card should not exist yet
-- **Missing a mnemonic hook** → Add a vivid or unusual association in the answer to make it distinctive
 
 ### Exclusions
 
@@ -223,13 +209,8 @@ Why does a metal spoon feel colder than a wooden spoon at the same temperature? 
 - [ ] Higher Tier content included
 - [ ] Every card tests exactly one atomic fact or one reasoning chain (no multi-fact cards)
 - [ ] Questions require production, not recognition (no yes/no or true/false)
-- [ ] Explain cards include the full cause-and-effect chain, not just restated facts
-- [ ] Compare cards address both sides of the comparison with the specific point of divergence
 - [ ] Confusable pairs identified and covered by dedicated compare/contrast cards
 - [ ] No diagram-dependent or multi-step calculation questions
-- [ ] Formula cards include both recall ("State the equation for...") and application ("Which equation is used when...") variants
-- [ ] Enumeration/list content split into individual atomic cards
-- [ ] Cloze cards delete exactly one semantically critical keyword each
 - [ ] Factual content from diagrams/visuals in the source extracted into text-based cards
 - [ ] Every question has exactly one unambiguous correct answer
 - [ ] Clear, concise phrasing throughout (target under 25 words for factual answers)
