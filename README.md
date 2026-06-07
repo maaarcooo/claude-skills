@@ -1,18 +1,28 @@
 # Claude Skills
 
-A collection of Claude Agentic Skills for intelligent document processing, study material generation, and PDF extraction.
+A collection of Claude Agentic Skills for intelligent document processing, study material generation, PDF extraction, and session continuity.
 
 ## Overview
 
-This repository contains specialized skills that enable Claude to process documents and generate study materials. Skills include PDF-to-markdown conversion, Anki flashcard generation, and revision notes creation.
+This repository contains specialized skills for Claude and Claude Code. Skills are organized into two categories: **General Claude Skills** for document processing, study material generation, and session handoff (works in any Claude interface) and **Claude Code Skills** providing slash commands for session continuity in the Claude Code CLI.
 
 ## Skills Overview
+
+### General Claude Skills
 
 | Skill | Purpose | Status |
 |-------|---------|--------|
 | [extracting-pdfs](#extracting-pdfs) | Extract and clean PDF content to markdown | Active |
 | [anki-flashcard-generator](#anki-flashcard-generator) | Generate Anki-importable flashcard decks | Active |
 | [revision-notes-generator](#revision-notes-generator) | Create concise revision notes from study materials | Active |
+| [handoff](#handoff) | Create structured handoff documents for session continuity | Active |
+
+### Claude Code Skills
+
+| Skill | Purpose | Status |
+|-------|---------|--------|
+| [handoff (Claude Code)](#handoff-claude-code) | `/handoff` slash command for session handoff | Active |
+| [resume](#resume) | `/resume` slash command to continue from a handoff | Active |
 
 ### Archived Skills
 
@@ -36,6 +46,16 @@ claude-skills/
 │   └── SKILL.md
 ├── revision-notes-generator/           # Revision notes generation skill
 │   └── SKILL.md
+├── handoff/                            # Session handoff skill (General Claude)
+│   ├── README.md
+│   └── SKILL.md
+├── claude-code-skills/                 # Claude Code slash commands
+│   ├── handoff/                        # /handoff command
+│   │   ├── README.md
+│   │   └── SKILL.md
+│   └── resume/                         # /resume command
+│       ├── README.md
+│       └── SKILL.md
 └── archive/                            # Archived/legacy skills
     ├── pdf-extract/                    # PDF extraction (development version)
     │   ├── SKILL.md
@@ -194,6 +214,38 @@ Use "revision-notes-generator" skill to create revision notes of the study mater
 
 ---
 
+### Handoff
+
+Create structured handoff documents for seamless continuity across Claude conversations. When a session ends, the handoff captures the full working state — objective, decisions with rationale, failed approaches, and next steps — so a fresh conversation can continue without re-explanation.
+
+The skill adapts its structure and depth to the type of work (research, writing, planning, building, learning, problem-solving) and the complexity of the session.
+
+> **Full documentation:** See [`handoff/README.md`](handoff/README.md) for work types, depth tiers, document structure, and usage instructions.
+
+---
+
+## Claude Code Skills
+
+Slash commands designed for the Claude Code CLI. These are installed at user-level (`~/.claude/skills/`) and invoked with `/command` syntax.
+
+---
+
+### Handoff (Claude Code)
+
+A `/handoff` slash command for Claude Code that generates structured handoff documents optimised for coding sessions. Captures implementation decisions, failed approaches, error messages, and file-level state that the codebase alone does not preserve. Each handoff references the previous one, creating a traceable handover chain across sessions.
+
+> **Full documentation:** See [`claude-code-skills/handoff/README.md`](claude-code-skills/handoff/README.md) for work types, depth tiers, the handover chain, and installation instructions.
+
+---
+
+### Resume
+
+A `/resume` slash command that loads a handoff document and gets you productive immediately. Companion to `/handoff` — it finds the most recent handoff (or a specific one you name), reads it, reviews the key files listed in it, and continues from the next step.
+
+> **Full documentation:** See [`claude-code-skills/resume/README.md`](claude-code-skills/resume/README.md) for usage and the handoff/resume workflow.
+
+---
+
 ## Archived Skills
 
 The following skills have been moved to the `archive/` folder. They are preserved for reference but are no longer actively maintained.
@@ -275,6 +327,7 @@ The PDF extraction skills include reference guides for handling common challenge
 - **Manual over automated** — Complex decisions handled manually for better results
 - **Atomic flashcards** — One fact per card for effective learning
 - **Accuracy first** — Verify and correct information in study materials
+- **Structured continuity** — Capture working state, not conversation summaries, so sessions can resume without re-explanation
 
 ## Technologies
 
