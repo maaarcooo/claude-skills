@@ -33,10 +33,9 @@ The handoff is designed to be downloaded and uploaded directly into a new conver
 
 1. **Trigger** — Ask Claude to create a handoff (e.g. "create a handoff", "/handoff"). Include any specific instructions about what to capture.
 2. **Classification** — Claude analyses the session to determine the work type and complexity tier, then selects the appropriate document structure.
-3. **Generation** — Claude produces the handoff document, capturing objective, current state, progress, decisions with rationale, failed approaches, open questions, next steps, and any relevant project context.
-4. **Output** — The handoff is saved as a downloadable markdown file (`handoff-[description].md`).
-
-No confirmation step interrupts the process. Claude generates the best handoff it can from the conversation, and the user can request edits afterwards.
+3. **Clarification (conditional)** — If the session contains genuine ambiguities (e.g. multiple topics with unclear scope, unsettled decisions, competing priorities for next steps), Claude asks at most 2-3 short, targeted questions before generating. If the session state is clear, this step is skipped entirely.
+4. **Generation** — Claude produces the handoff document, capturing objective, current state, progress, decisions with rationale, failed approaches, open questions, next steps, and any relevant project context.
+5. **Output** — The handoff is saved as a downloadable markdown file (`handoff-[description].md`).
 
 ## Work Types
 
