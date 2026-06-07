@@ -34,13 +34,50 @@ Before generating, silently assess:
 
 ### Step 2: Check for User Instructions
 
-If the user included specific instructions in their handoff request (e.g. "create a handoff, make sure to include X"), incorporate those. Do not ask for confirmation or clarification before generating. Produce the best handoff possible from the conversation, and let the user request edits afterwards.
+If the user included specific instructions in their handoff request (e.g.
+"create a handoff, make sure to include X"), incorporate those into the
+handoff.
 
-### Step 3: Generate the Handoff Document
+### Step 3: Clarify Ambiguities (Conditional)
 
-Build the document using the adaptive structure matching the work type and complexity tier. Follow the format and content guidelines below.
+**This step is conditional.** If the session state is clear and unambiguous,
+skip directly to Step 4.
 
-### Step 4: Output
+Before generating, check whether the session contains genuine ambiguities that
+would lead to a materially different handoff depending on interpretation. If
+so, ask **at most 2-3 short, specific questions** to confirm direction before
+generating.
+
+Questions should only be asked when they fall into one of these categories:
+
+- **Scope** — The session covered multiple distinct topics and it is unclear
+  whether the handoff should cover all of them or a subset. (e.g. "This
+  session covered both the personal statement structure and the EPQ source
+  evaluation. Should the handoff cover both, or just the EPQ work?")
+- **Decision status** — Something was discussed at length but not clearly
+  resolved. It is unclear whether to record it as a settled decision or an
+  open question. (e.g. "We discussed using a timeline layout vs a grid
+  layout. Should I record the timeline as the decided approach, or is that
+  still open?")
+- **Priority / direction** — Multiple next steps are plausible and the
+  ordering matters for the receiving session. (e.g. "For next steps, should
+  the priority be finishing the draft or incorporating the new sources we
+  found?")
+
+**Do not ask:**
+- Open-ended questions like "Is there anything specific you want me to capture?"
+- Questions whose answers are clearly stated or implied in the conversation
+- Questions about minor details that would not change the handoff's usefulness
+
+If no genuine ambiguities exist, proceed directly to generation with no
+questions.
+
+### Step 4: Generate the Handoff Document
+
+Build the document using the adaptive structure matching the work type and
+complexity tier. Follow the format and content guidelines below.
+
+### Step 5: Output
 
 Save the handoff as a markdown file:
 
