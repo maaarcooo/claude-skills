@@ -33,35 +33,102 @@ the new handoff under a "Previous Session" heading with a key carryover note.
 4. Generate the handoff document
 5. Save to `.claude/handoffs/[YYYY-MM-DD]-[description].md`
 
+---
+
 ## Work type classification
 
-Select the primary type. Pull in sections from secondary types if the session
-spans multiple.
+Classify the session to determine which structural sections are most relevant.
+If a session spans multiple types, use the primary type and pull in relevant
+sections from secondary types.
 
-- **Feature** — Implementation state, design decisions, files modified, remaining work
-- **Bug fix** — Problem description, reproduction steps, hypotheses tested, root cause, fix status
-- **Refactoring** — Strategy, patterns applied, files remaining, regressions to watch
-- **Config/Setup** — Changes made, what works, what doesn't, environment details
-- **Architecture** — Options considered, decisions made, constraints, open design questions
-- **Testing** — Strategy, tests written, coverage gaps, failures under investigation
-- **Mixed** — Universal structure with type-specific sections as needed
+### Feature Implementation
+Building new functionality, adding endpoints, creating components.
+
+**Key sections:** Objective, Implementation State, Architecture/Design
+Decisions, Files Modified, Remaining Work, Issues Encountered.
+
+### Bug Fixing / Debugging
+Diagnosing and fixing issues, investigating unexpected behaviour.
+
+**Key sections:** Problem Description, Reproduction Steps, Hypotheses Tested,
+Root Cause (if found), Fix Applied (if any), Remaining Hypotheses.
+
+### Refactoring
+Restructuring existing code without changing behaviour.
+
+**Key sections:** Objective, Refactoring Strategy, What Has Been Refactored,
+Patterns Being Applied, Files Remaining, Regressions to Watch For.
+
+### Configuration / Setup
+Environment setup, dependency management, build configuration, tooling.
+
+**Key sections:** Objective, Configuration Changes Made, What Works Now, What
+Does Not Work Yet, Environment-Specific Details.
+
+### Architecture / Design
+High-level design discussions, structural decisions, API design.
+
+**Key sections:** Objective, Options Considered, Decisions Made (with
+rationale), Constraints, Design Artefacts (diagrams, schemas), Open Design
+Questions.
+
+### Testing
+Writing or fixing tests, improving coverage, test infrastructure.
+
+**Key sections:** Objective, Test Strategy, Tests Written, Coverage Gaps
+Remaining, Test Failures Under Investigation.
+
+### Mixed / General
+Sessions spanning multiple types or not fitting neatly into one category.
+
+**Key sections:** Use the universal structure and pull in type-specific
+sections as needed.
+
+---
 
 ## Depth sizing
 
-Scale to complexity. The codebase provides significant context, so the handoff
-captures only what the code cannot.
+Assess the complexity of the work to determine how comprehensive the handoff
+should be. The codebase provides significant context, so the handoff captures
+what the code cannot: intent, rationale, failed approaches, and session-specific
+state.
 
-- **Light (200-400 words)** — Simple fix, config change, single-file task
-- **Standard (400-800 words)** — New endpoint, moderate debugging, tool setup
-- **Deep (800-1500 words)** — Multi-component feature, complex bug, module refactor
-- **Extended (1500+ words)** — Large architectural decisions, multiple workstreams
+### Light (roughly 200-400 words)
+Simple, focused tasks. One file or a small change, few decisions, clear next
+steps.
 
-Prioritise decisions and rationale over brevity.
+Examples: fixing a straightforward bug, adding a simple utility function,
+updating a config value.
+
+### Standard (roughly 400-800 words)
+Moderate tasks touching several files. Meaningful decisions made, some
+investigation involved.
+
+Examples: implementing a new API endpoint, debugging an intermittent test
+failure, setting up a new build tool.
+
+### Deep (roughly 800-1500 words)
+Complex work with significant decision-making, multiple files involved,
+established patterns or conventions being followed.
+
+Examples: implementing a multi-component feature, resolving a complex bug
+after several failed hypotheses, refactoring a module with many dependents.
+
+### Extended (roughly 1500+ words)
+Use sparingly. For sessions with extensive investigation, large architectural
+decisions, or multiple interconnected workstreams.
+
+These word counts are guidelines, not hard limits. Prioritise capturing
+decisions and rationale thoroughly. A handoff that is slightly too long is far
+less costly than one that forces the user to re-explain context.
+
+---
 
 ## Document structure
 
-Include or exclude sections based on relevance. No empty sections. Reference
-files by path rather than reproducing content.
+Every handoff follows this skeleton. Include or exclude sections based on work
+type and relevance. Do not include empty sections. Reference files by path
+rather than reproducing content.
 
 ```markdown
 # Handoff: [Descriptive Title]
@@ -83,39 +150,64 @@ files by path rather than reproducing content.
 
 ## Objective
 
-[What we are trying to accomplish and why.]
+[What we are trying to accomplish and why. Include enough context that a fresh
+session understands both the task and its motivation.]
 
 ## Current State
 
-[Precise snapshot of where the work stands. What works, what doesn't,
-what is partially complete.]
+[Precise snapshot of where the work stands. Not a summary of the conversation,
+but the actual state. What works, what doesn't, what is partially complete.
+Not "we worked on the API" but "the /users endpoint returns 200 with correct
+data, the /auth endpoint throws a 401 on valid tokens, investigation ongoing."]
 
 ## What Was Done
 
-- [Action] — [outcome]
-- [Action] — [outcome]
+[Concrete actions taken this session. Focus on outcomes, not conversation
+history.]
+
+- [Action] — [outcome or result]
+- [Action] — [outcome or result]
 
 ## Decisions Made
 
-- **[Decision]** — [Rationale. Alternatives considered.]
+[Each decision with its rationale. The rationale prevents the new session from
+relitigating settled questions. Without the "why", the new session may
+unknowingly reverse a carefully considered choice.]
+
+- **[Decision]** — [Why this was chosen. What alternatives were considered.]
 
 ## Approaches That Did Not Work
 
-- **[Approach]** — [Why it failed or was rejected]
+[Directions explored and rejected. Include what was tried and why it failed or
+was abandoned. This is one of the highest-value sections — it prevents the
+most common failure mode: the new session repeating work that has already been
+tried and rejected.]
+
+- **[Approach]** — [Why it did not work]
 
 ## Files Modified
 
-- `path/to/file` — [What changed and why]
+[Files changed during this session, with a brief note on what and why. The
+new session can read these files directly.]
+
+- `path/to/file.ext` — [What was changed and the intent]
 
 ## Issues / Errors Encountered
 
-[Exact error messages, unexpected behaviours, reproduction steps.]
+[Specific error messages, unexpected behaviours, or blockers. Include exact
+error text where relevant — these are hard to rediscover.]
 
 ## Open Questions
+
+[Unresolved items needing attention. Frame as specific questions, not vague
+areas.]
 
 - [ ] [Specific question]
 
 ## Next Steps
+
+[Ordered list of what to do next. The first item is the very next action.
+Clear enough that the receiving session knows exactly what to do first.]
 
 1. [First action — specific and concrete]
 2. [Second action]
@@ -123,30 +215,80 @@ what is partially complete.]
 
 ## Files to Review on Resume
 
-- `path/to/file` — [Why this file matters for continuing]
+[Key files the new session should read to get up to speed. Only include files
+that are central to understanding the current state of the work.]
+
+- `path/to/file.ext` — [Why this file matters]
 ```
 
-## Content rules
+---
 
-**Always include:** Objective with motivation. Precise current state. Decisions
-with rationale. Failed approaches with reasons. Actionable next steps. Files
-modified and files to review.
+## Content guidelines
 
-**Include when relevant:** Exact error messages. Reproduction steps. Key
-patterns or conventions established. Interface contracts not yet implemented.
-Environment-specific details (ports, config values, service URLs).
+### Always include
 
-**Exclude:** File contents (the new session reads files directly). General
-framework knowledge. Conversational narrative. Verbose terminal output.
-Intermediate reasoning that reached conclusions.
+1. **Objective with motivation** — A fresh session with no conversation history
+   needs to understand not just the task but why it matters and the scope.
+2. **Precise current state** — Where exactly the work stands right now as a
+   state description, not a narrative. What exists, what works, what is broken,
+   what is incomplete.
+3. **Decisions with rationale** — The reasoning behind decisions is more
+   valuable than the decisions themselves. Without rationale, the new session
+   may unknowingly reverse a carefully considered choice.
+4. **Failed approaches** — What was tried and rejected, and why. This prevents
+   the most common failure mode in session handoffs: the new session retrying
+   something that has already been tried and ruled out.
+5. **Actionable next steps** — Clear enough that the receiving session knows
+   exactly what to do first without asking.
+6. **Files modified and files to review** — The new session can read these
+   immediately to rebuild context from the code.
 
-## Quality check
+### Include when relevant
 
-Before saving, verify:
+- **Exact error messages** — Hard to rediscover, easy to lose. Include the
+  full error text when it is central to ongoing debugging.
+- **Reproduction steps** — For bugs or issues still under investigation, the
+  exact steps to reproduce the problem.
+- **Key code patterns** — When a convention or pattern was established that
+  future code should follow (e.g. "all new endpoints use the `withAuth`
+  middleware wrapper").
+- **Interface contracts** — When an API shape, data format, or type signature
+  was agreed upon but not yet fully implemented.
+- **Environment-specific details** — Ports, config values, paths, service URLs,
+  environment variables that affect the work.
+- **User preferences or constraints** — Things the user stated about how they
+  want the work done that are not obvious from the code.
 
-- A fresh session could continue without asking for re-explanation
-- Every decision includes rationale
-- Failed approaches are documented
-- Next steps are immediately actionable
-- File paths are accurate
-- No code is reproduced that could be read from disk
+### Exclude
+
+- **File contents** — The new session can read files directly. Do not reproduce
+  code blocks unless they capture something not obvious from the file itself
+  (e.g. a subtle bug, a specific pattern being followed, a key interface
+  contract).
+- **General knowledge** — Do not explain frameworks, libraries, or concepts
+  Claude already knows. "We discussed how middleware works" adds nothing.
+  "Decided to use middleware over route-level auth because [reason]" adds value.
+- **Conversational narrative** — Capture state, not history. Not "we discussed
+  whether to use middleware" but "decided to use middleware because [reason]."
+- **Verbose command output** — Summarise results, do not paste full terminal
+  output or tool responses.
+- **Intermediate reasoning** — If reasoning reached a conclusion, capture the
+  conclusion and rationale, not every step of the reasoning process.
+
+---
+
+## Quality checklist
+
+Before saving the handoff, verify:
+
+- [ ] A fresh session reading this document could continue without asking the
+      user to re-explain anything
+- [ ] The current state is a precise snapshot, not a vague summary
+- [ ] Every decision includes its rationale
+- [ ] Failed approaches are documented with reasons for rejection
+- [ ] Next steps are specific and immediately actionable
+- [ ] File paths are accurate and complete
+- [ ] No code is reproduced that the new session could read from disk
+- [ ] No empty sections are included
+- [ ] No conversational narrative or filler is present
+- [ ] The document is appropriately sized for the complexity of the work
