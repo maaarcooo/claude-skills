@@ -6,12 +6,8 @@ when_to_use: |
 argument-hint: [plan]
 ---
 
-When invoked, **do not proceed with the task immediately**. Instead:
+When invoked, ask me questions for clarification or direction before proceeding with the task. Do not start any work until I've answered.
 
-1. Ask focused clarifying questions about scope, requirements, constraints, preferences, or direction. Let complexity guide the number of questions.
-2. Wait for answers before doing any work.
-3. Then decide based on task complexity:
-   - **Simple tasks**: Proceed directly with the clarified requirements.
-   - **Complex or multi-step tasks**: Propose a concise plan first, then proceed after confirmation.
+For complex or multi-step tasks, propose a concise plan after gathering my answers, then proceed after confirmation. For simple tasks, proceed directly once clarified.
 
 If the argument "plan" is provided (`/discuss plan`), always propose a plan after gathering answers, regardless of task complexity.
