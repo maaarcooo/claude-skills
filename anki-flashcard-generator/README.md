@@ -102,7 +102,7 @@ How does the elastic limit differ from the limit of proportionality? | Limit of 
 
 ```
 Create an Anki flashcard deck from the attached study materials using the "anki-flashcard-generator" skill.
-Save the deck as a .txt file named after the source file (e.g. Physics_Chapter_5.pdf → Physics_Chapter_5.txt).
+Output the deck as a .txt file named after the source file (e.g. Physics_Chapter_5.pdf → Physics_Chapter_5.txt).
 ```
 
 **Claude API:**
