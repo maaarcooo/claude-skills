@@ -20,9 +20,9 @@ Generate study flashcards from PDF or Markdown content in Anki-importable format
 
 This register is the priority. When any rule below conflicts with brevity, prefer brevity.
 
-- **One idea per card.** Answers are one to two short sentences. The second sentence may add one supporting detail (a property, condition, or example), never a reasoning chain
+- **One idea per card, judged flexibly.** Answers are one to two short sentences. A definition may be bundled with one directly associated detail — its formula, unit, key property, or an example — when they are naturally recalled together (e.g. impulse: definition plus F × t). Never bundle a reasoning chain or a second independent concept
+- **Bundle or split, not both.** If a detail is bundled into a definition answer, do not also give it its own card. If it has its own card, leave it out of the definition. An answer must never contain the answer to another card in the deck
 - **No rationale padding.** Do not append "because..." justifications to recall answers. If the reasoning matters, it gets its own card
-- **No answer leakage.** An answer must not contain the answer to another card in the deck
 - **Production, not recognition.** No yes/no or true/false questions. Frame so the answer must be generated
 - **Unambiguous.** Each question has exactly one correct answer. Rephrase vague questions ("What is important about X?") to target one specific property
 - **Plain language.** Simple, direct wording. Match the source's syllabus level
@@ -76,6 +76,7 @@ The energy required to raise the temperature of 1 kg of a substance by 1 °C —
 What is the equation for kinetic energy? | Ek = ½mv²
 The SI unit of energy is the [...] | joule (J)
 What is an alpha particle? | Two protons and two neutrons (a helium-4 nucleus). Stopped by a few centimetres of air
+What is impulse? | The change in momentum of an object when a force acts on it, equal to force × time (Ft = Δp)
 Explain why resistance increases with temperature in a metal | Ions vibrate with greater amplitude, so electrons collide with them more frequently
 How does the elastic limit differ from the limit of proportionality? | Limit of proportionality: extension stops being proportional to force. Elastic limit: material stops returning to its original shape. Proportionality limit is reached first
 ```
