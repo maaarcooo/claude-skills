@@ -79,14 +79,14 @@ How does electrical conduction differ between metals and semiconductors? | In me
 **claude.ai:**
 
 ```
-Use "anki-flashcard-generator" skill to create an Anki flashcard deck of the study materials.
-Output the flashcards as a text file. Name the file after the source file (e.g., Physics_Chapter_5.pdf → Physics_Chapter_5.txt).
+Create an Anki flashcard deck from the attached study materials using the "anki-flashcard-generator" skill.
+Output the deck as a .txt file named after the source file (e.g. Physics_Chapter_5.pdf → Physics_Chapter_5.txt).
 ```
 
 **Claude API:**
 
 ```
-Use "anki-flashcard-generator" skill to create an Anki flashcard deck of the study materials.
+Create an Anki flashcard deck from the attached study materials using the "anki-flashcard-generator" skill.
 Output only the flashcard lines in the format "Question | Answer", one per line.
 Do not include any preamble, headers, explanations, markdown formatting,
 or code fences. The raw output will be saved directly to a text file.
