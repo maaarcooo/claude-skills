@@ -1,24 +1,30 @@
 # Anki Flashcard Generator
 
-> **Source:** Converted from [anki-flashcard/prompt-v4.txt](https://github.com/maaarcooo/llm-custom-instructions/blob/main/anki-flashcard/prompt-v4.txt)
+> **Source:** Evolved from [anki-flashcard/prompt-v4.txt](https://github.com/maaarcooo/llm-custom-instructions/blob/main/anki-flashcard/prompt-v4.txt). Current skill version: **v3.6**. A standalone fallback prompt with full instruction parity is maintained as `anki-flashcard-prompt-v5.md` for when the skill feature is unavailable.
 
-Generate study flashcards from PDF or Markdown content in Anki-importable format.
+Generate study flashcards from PDF or Markdown content in Anki-importable format. Cards are terse, exam-aligned, and quick to self-grade during review.
 
 ## The Problem
 
-Creating effective flashcards manually is time-consuming and inconsistent. Poor card design — multi-fact cards, ambiguous phrasing, recognition-based questions — undermines spaced repetition rather than supporting it. Students also miss confusable pairs between cards, leading to interference that degrades recall as the deck matures.
+Creating effective flashcards manually is time-consuming and inconsistent. Poor card design — ambiguous phrasing, recognition-based questions, answers that leak other cards' content — undermines spaced repetition rather than supporting it. Factual errors in source notes get cemented through months of reviews. And model defaults drift across versions: the same prompt that produced clean, terse decks on one model produces padded, over-elaborated decks on the next.
 
 ## The Solution
 
-Evidence-based card design following six core principles optimised for active recall and long-term retention under spaced repetition scheduling. Six specialised card types are matched to different knowledge types, and a built-in interference check scans for confusable pairs. Output is in Anki's native import format (`Question | Answer`, one card per line).
+A deliberately small rule set, split into two types:
+
+- **Defect-blocking rules** (strict): no yes/no questions, no pipe characters in content, no diagram-dependent cards, no circular answers, accuracy verification with error flagging. These prevent objective failures and never shape style.
+- **Style conveyed by example** (flexible): the terse register, bundling judgment, and card-type selection are taught through concrete example cards rather than prescriptive principles, leaving the model room to adapt per situation.
+
+This split is the result of testing across model versions: prescriptive style rules (rigid atomicity targets, mandatory "why/how" framing, universal bidirectional cards) were found to globally distort deck character, while defect-blocking rules cost nothing. Output is in Anki's native import format (`Question | Answer`, one card per line).
 
 ## Key Features
 
-- **Six core design principles** — Understand-first, atomicity, production over recognition, depth of processing, dual coding, personal connection
-- **Six card types** — Definition, explain/justify, cloze-style, compare/contrast, formula/equation, enumeration
-- **Interference management** — Dedicated compare/contrast cards for confusable pairs
-- **Coverage guidance** — Prioritised by examinability: definitions, laws, key equations, and explain/justify points first
-- **Quality checklist** — Validates completeness, atomicity, phrasing, and exclusions
+- **Flexible atomicity** — One idea per card, but a definition may bundle one directly associated detail (formula, unit, key property) when naturally recalled together
+- **Bundle or split, not both** — A bundled detail never also gets its own card; no answer contains another card's answer
+- **Accuracy verification** — Clear factual errors are fixed; possible syllabus-level simplifications are kept and flagged in chat, never silently rewritten
+- **Constrained interference check** — Exactly two passes: resolve contradicting cards, and add one compare card per pair the source itself contrasts
+- **Six card types** — Definition (with scoped reverse cards), recall, formula application, cloze, explain, enumeration
+- **Content-driven deck size** — No card-count targets; the material decides
 
 ## When to Use
 
@@ -27,51 +33,67 @@ Only when "Anki flashcard" or "Anki deck" is explicitly mentioned. The skill doe
 ## How It Works
 
 1. **Read** the source file (PDF or Markdown) thoroughly
-2. **Verify** accuracy of all information in the source — correct any errors
-3. **Identify** all key content: bolded terms, highlighted text, and Higher Tier material
-4. **Generate** flashcards covering all essential topic content, selecting the most effective card type for each piece of knowledge
-5. **Check** for interference: scan the full card set for confusable pairs and add discriminative cards where needed
+2. **Verify** accuracy: fix clear factual errors; keep and flag possible intentional simplifications (flags go in the chat response, never the output file)
+3. **Identify** key content: definitions, laws, equations, units, standard values, conditions, named processes, and common explain/justify points
+4. **Generate** cards covering all essential topic content
+5. **Check** the finished set for contradictions and source-contrasted pairs only
 6. **Format** output as one card per line: `Question | Answer`
 
-## Core Design Principles
+## Card Style
 
-Ordered by impact on retention:
+The terse register is the priority — when any rule conflicts with brevity, brevity wins.
 
-- **Understand-first rule**: Never create cards for content the learner has not yet studied — cards consolidate existing understanding, they don't teach new concepts
-- **Minimum information (atomicity)**: Each card tests exactly one atomic piece of knowledge, answerable in under 6 seconds
-- **Production over recognition**: Cards require producing an answer from memory, not merely recognising it — no yes/no or true/false questions
-- **Depth of processing**: Frame questions using "why," "how," or "explain" to force elaborative processing rather than rote retrieval
-- **Dual coding**: Extract factual content from diagrams/visuals into text-based cards; the learner may attach images manually in Anki after import
-- **Personal connection**: Where content allows, frame cards using concrete, relatable scenarios rather than abstract statements
+- **One idea per card, judged flexibly**: answers are one to two short sentences; a definition may bundle one directly associated detail, never a reasoning chain or a second independent concept
+- **Bundle or split, not both**: each detail lives in exactly one place in the deck
+- **No rationale padding**: no "because..." justifications appended to recall answers — if reasoning matters, it gets its own card
+- **Production over recognition**: no yes/no or true/false questions; rephrase so the answer must be generated
+- **Unambiguous**: each question has exactly one correct answer
+- **Plain language**: simple, direct wording matched to the source's syllabus level
 
 ## Card Types
 
-- **Definition** (forward + reverse): Both directions for key terms to build bidirectional retrieval links
-- **Explain/justify**: Full cause-and-effect chains for reasoning-based exam questions
-- **Cloze-style**: Facts embedded in context with exactly one keyword deleted per card
-- **Compare/contrast**: For commonly confused concepts — highlights the specific point of divergence
-- **Formula/equation**: Formula recall plus at least one application card for when/why to use it
-- **Enumeration**: Individual cards per list item rather than testing entire lists at once
+- **Definition**: forward card always; reverse card as a separate line for key terms only (terms the exam asks candidates to define)
+- **Recall**: single facts, values, units, equations
+- **Formula application**: alongside a formula card, optionally one single-step application — never multi-step
+- **Cloze**: one deletion per card, used sparingly, only where context cues recall without giving the answer away
+- **Explain**: only where the source itself explains the reasoning and it is a likely exam point; mechanism stated in at most two sentences
+- **Enumeration**: one card per list item; a list answer may contain at most 3 items, and only if the source treats them as a single fact
 
-## Card Design Rules
+Compare/contrast cards are not a free card type — they are generated only by the interference check below.
 
-- **Concise**: Simple, direct language; aim for answers under 25 words for factual cards
-- **Unambiguous**: Each question must have exactly one correct answer
-- **Bidirectional**: Both forward and reverse cards for key definitions
-- **Interference management**: Dedicated compare/contrast cards for confusable pairs
-- **Exclusions**: No diagram-dependent questions, multi-step calculations, yes/no questions, or cards listing more than 3 items
+## Interference Check
+
+After generating, the deck is scanned for exactly two failure modes:
+
+1. **Contradictions** — cards whose answers conflict as phrased (e.g. "Which radiation is most ionising?" answered differently under unstated contexts); each question is rephrased to name its context
+2. **Source-contrasted pairs** — where the source explicitly contrasts two concepts, one compare card states the specific point of divergence
+
+No other compare cards are generated, and never two compare cards for the same distinction.
+
+## Exclusions
+
+- Questions requiring a diagram or visual to answer (factual content from diagrams is converted to text cards)
+- Multi-step calculations
+- Yes/no or true/false questions
+- Answers that merely restate the question (omitted and flagged instead)
+- Cards for content the source does not adequately explain
+- The `|` character inside any question or answer
 
 ## Output Format
 
-One card per line, question and answer separated by a pipe:
+One card per line, question and answer separated by a single pipe. No preamble, headers, blank lines, or markdown in the output file.
 
 ```
 What is the unit of electrical resistance? | Ohm (Ω)
-Define specific heat capacity | The energy required to raise the temperature of 1 kg of a substance by 1°C
-The energy required to raise 1 kg of a substance by 1°C — what quantity is this? | Specific heat capacity
+Define specific heat capacity | The energy required to raise the temperature of 1 kg of a substance by 1 °C
+The energy required to raise the temperature of 1 kg of a substance by 1 °C — what quantity is this? | Specific heat capacity
+What is the equation for kinetic energy? | Ek = ½mv²
 The SI unit of energy is the [...] | joule (J)
-Explain why resistance increases with temperature in a metal | At higher temperatures, metal ions vibrate with greater amplitude, so conduction electrons collide more frequently with ions, transferring less charge per unit time
-How does electrical conduction differ between metals and semiconductors? | In metals, resistance increases with temperature (more ion vibrations impede electron flow). In semiconductors, resistance decreases with temperature (more electrons gain enough energy to enter the conduction band, increasing the number of charge carriers)
+What is an alpha particle? | Two protons and two neutrons (a helium-4 nucleus). Stopped by a few centimetres of air
+What is impulse? | The change in momentum of an object when a force acts on it, equal to force × time (Ft = Δp)
+What is the worst-case time complexity of binary search? | O(log n)
+Explain why resistance increases with temperature in a metal | Ions vibrate with greater amplitude, so electrons collide with them more frequently
+How does the elastic limit differ from the limit of proportionality? | Limit of proportionality: extension stops being proportional to force. Elastic limit: material stops returning to its original shape. Proportionality limit is reached first
 ```
 
 ## Sample Prompts
@@ -80,7 +102,7 @@ How does electrical conduction differ between metals and semiconductors? | In me
 
 ```
 Create an Anki flashcard deck from the attached study materials using the "anki-flashcard-generator" skill.
-Output the deck as a .txt file named after the source file (e.g. Physics_Chapter_5.pdf → Physics_Chapter_5.txt).
+Save the deck as a .txt file named after the source file (e.g. Physics_Chapter_5.pdf → Physics_Chapter_5.txt).
 ```
 
 **Claude API:**
@@ -103,3 +125,8 @@ skills/
 ```
 
 Then trigger by mentioning "Anki flashcard" or "Anki deck" in your conversation.
+
+## Version Notes
+
+- **v3.6** — Rebuilt around the defect-blocking vs style-prescribing rule split. Softened atomicity to permit definition + associated-detail bundling, added bundle-or-split, banned circular answers, constrained the interference check to two cases, removed card-count anchors, scoped reverse cards to key terms, removed GCSE-era "Higher Tier" references, added the pipe-character exclusion. Validated on A-Level Physics sources inside and outside projects with convergent output
+- **v3.3–v3.5** — Principle-heavy versions (depth of processing, universal bidirectional cards, personal connection); produced over-elaborated decks and were superseded
