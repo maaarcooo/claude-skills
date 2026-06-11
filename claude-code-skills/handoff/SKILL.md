@@ -5,7 +5,7 @@ description: >
   so a fresh session can continue without re-explanation.
 disable-model-invocation: true
 argument-hint: "[optional focus scope]"
-allowed-tools: Bash(mkdir *) Bash(ls *)
+allowed-tools: Bash(mkdir *) Bash(ls *) Bash(cat *) Read Write
 ---
 
 # Session Handoff
@@ -22,14 +22,26 @@ aspect of the session. Otherwise, generate a full-session handoff.
 
 !`ls -1t .claude/handoffs/*.md 2>/dev/null | head -5`
 
-If previous handoffs exist above, reference the most recent one at the top of
-the new handoff under a "Previous Session" heading with a key carryover note.
+If previous handoffs exist above, read the most recent one and reference it
+at the top of the new handoff under a "Previous Session" heading.
+
+**Carryover rule:** the "Previous Session" note must *restate* any context
+from earlier sessions that is still live — open questions, unresolved bugs,
+standing constraints, conventions being followed — not merely link to the
+previous file. Each handoff must be self-sufficient: a session reading only
+the newest handoff should have everything still relevant. Context that is no
+longer live should be dropped, so stale items do not propagate forever.
+
+**Retention:** if more than ~10 handoffs have accumulated in
+`.claude/handoffs/`, suggest to the user that older ones be archived or
+deleted — superseded handoffs add noise when listing and resuming.
 
 ## Process
 
 1. Create `.claude/handoffs/` if it does not exist: `mkdir -p .claude/handoffs`
 2. Classify the work type and complexity to determine structure and depth
-3. If previous handoffs exist, read the most recent one to identify carryover
+3. If previous handoffs exist, read the most recent one and apply the
+   carryover rule above
 4. Generate the handoff document
 5. Save to `.claude/handoffs/[YYYY-MM-DD]-[description].md`
 
@@ -91,7 +103,8 @@ sections as needed.
 Assess the complexity of the work to determine how comprehensive the handoff
 should be. The codebase provides significant context, so the handoff captures
 what the code cannot: intent, rationale, failed approaches, and session-specific
-state.
+state. Be complete on decisions, rationale, and failed approaches; ruthless on
+everything else.
 
 ### Light (roughly 200-400 words)
 Simple, focused tasks. One file or a small change, few decisions, clear next
@@ -118,9 +131,7 @@ after several failed hypotheses, refactoring a module with many dependents.
 Use sparingly. For sessions with extensive investigation, large architectural
 decisions, or multiple interconnected workstreams.
 
-These word counts are guidelines, not hard limits. Prioritise capturing
-decisions and rationale thoroughly. A handoff that is slightly too long is far
-less costly than one that forces the user to re-explain context.
+These word counts are calibration guidelines, not targets to fill.
 
 ---
 
@@ -144,7 +155,9 @@ rather than reproducing content.
 ## Previous Session
 <!-- Only if prior handoffs exist -->
 - Handoff: `.claude/handoffs/[previous-filename].md`
-- Key carryover: [what is still relevant from the previous session]
+- Live carryover: [restate everything from earlier sessions that is still
+  relevant — open questions, constraints, conventions. Self-sufficient, not
+  just a pointer.]
 
 ---
 
@@ -286,6 +299,8 @@ Before saving the handoff, verify:
 - [ ] The current state is a precise snapshot, not a vague summary
 - [ ] Every decision includes its rationale
 - [ ] Failed approaches are documented with reasons for rejection
+- [ ] The "Previous Session" carryover (if present) restates live context
+      rather than only linking the previous file
 - [ ] Next steps are specific and immediately actionable
 - [ ] File paths are accurate and complete
 - [ ] No code is reproduced that the new session could read from disk
