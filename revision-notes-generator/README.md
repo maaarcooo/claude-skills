@@ -2,23 +2,25 @@
 
 > **Source:** Converted from [revision-notes/prompt-v2.txt](https://github.com/maaarcooo/llm-custom-instructions/blob/main/revision-notes/prompt-v2.txt)
 
-Generate concise, accurate revision notes from PDF or Markdown study materials.
+Generate accurate, self-contained revision notes from PDF or Markdown study materials.
 
 ## The Problem
 
-Study materials are often dense, poorly organised, or contain errors. Condensing them manually is slow and risks missing key content or carrying forward inaccuracies. Students need structured notes that prioritise examinable knowledge without the clutter of specification codes, repeated content, or unnecessary padding.
+Study materials are often dense, poorly organised, or contain errors. Condensing them manually is slow and risks missing key content or carrying forward inaccuracies. LLM-generated notes have their own failure modes: coverage drifts between runs, knowledge gets silently added from outside the source, and "verify accuracy" instructions produce no observable behaviour. Students need notes that are complete, honest about their sources, and usable without referring back to the original material.
 
 ## The Solution
 
-Automated generation of concise revision notes that cross-checks source accuracy and corrects errors. The output is structured markdown with clear heading hierarchy, bold key terms, and equations in code blocks. Higher Tier content is included and optionally marked, while specification/syllabus reference codes are excluded — the focus is purely on knowledge content.
+Automated generation of revision notes with verified coverage and full source transparency. The skill builds a coverage map of the source before writing, runs a mandatory verification pass before output, and marks every claim that goes beyond the source. Source errors are flagged rather than silently corrected, so nothing changes invisibly between the original material and the notes.
 
 ## Key Features
 
-- **5-step process** — Read, identify, verify, write, output
-- **Accuracy verification** — Cross-checks facts against known information and corrects errors in the source
-- **Writing guidelines** — Concise, complete, accurate, structured, clean, Higher Tier
-- **Higher Tier support** — Includes advanced content with optional (HT) marking
-- **Clean output** — Excludes specification codes, focuses on knowledge content
+- **Coverage map** — Every subheading, method, equation, and condition in the source is listed before writing and checked against before output, eliminating run-to-run coverage drift
+- **Flagged additions** — Knowledge added beyond the source is marked inline with `*(Beyond source: ...)*`, never inserted silently
+- **Error flagging** — Statements that conflict with standard treatment are kept and flagged with `⚠ Check`, never silently corrected
+- **Worked example policy** — Examples that teach reusable methods are compressed and retained, while pure number-substitution examples are dropped
+- **Signal density** — Every sentence must define, explain, or connect a concept, with no length cap, so conciseness means zero noise rather than brevity
+- **Self-contained** — Diagram content is translated into prose or tables, with no "see source" references
+- **Mandatory verification** — An explicit checklist pass before output, covering coverage, accuracy, internal consistency, and formatting
 
 ## When to Use
 
@@ -26,49 +28,52 @@ When asked to create revision notes, study notes, topic summaries, or condensed 
 
 ## How It Works
 
-1. **Read** the source file thoroughly
-2. **Identify** key content: bolded terms, highlighted text, and Higher Tier material
-3. **Verify** accuracy of all information — correct any errors found
-4. **Write** concise notes covering all essential knowledge
-5. **Output** as a structured markdown file
+1. **Read** the attached source in full, including figures, diagrams, tables, and worked examples
+2. **Map** the source structure into a coverage checklist
+3. **Write** the notes following the content rules
+4. **Verify** against the mandatory checklist and fix any failures
+5. **Output** as a markdown file with the exact specified title
 
-## Writing Guidelines
+## Content Rules
 
-- **Concise**: Condense to essential points
-- **Complete**: Cover all necessary knowledge
-- **Accurate**: Cross-check and correct errors
-- **Structured**: Clear headings and logical organisation
-- **Clean**: Exclude specification/syllabus codes
-- **Higher Tier**: Include and optionally mark with (HT)
+- **Coverage (the floor)**: Every item in the source map appears in the notes, however compressed
+- **Signal density (the style)**: No filler, no restated headings, no redundancy
+- **Self-contained**: Complete understanding from the notes alone
+- **Fidelity with flagged additions**: Faithful to the source, with marked additions only where needed
+- **Error flagging**: Keep and flag, never silently correct
+- **Worked examples**: Keep methods, drop number substitution
+- **Tier labelling**: (HT) marking applies to GCSE sources only
 
 ## Output Format
 
-Markdown with title, section headings, bold key terms, and equations in code blocks.
+Markdown with the title as H1, source section numbering retained for cross-referencing, key terms in bold on first definition, equations in LaTeX, and tables for comparative content. Ends with a Key Equations Summary, plus a Key Constants table where the source provides constants.
 
 ```markdown
 # Topic Title
 
-## Section Heading
+### 4.1.3 Section Heading
 
-**Key term** — definition or explanation.
+**Key term** is the definition or explanation.
 
-Another important point covering essential knowledge.
+$$F = ma$$
 
-### Subsection
+*(Beyond source: an added fact, marked inline.)*
 
-- Concise bullet points for related facts
-- `equation or formula in code block`
+> ⚠ Check: source states X; standard treatment is Y.
 ```
 
 ## Sample Prompts
 
 ```
-Use "revision-notes-generator" skill to create revision notes of the study materials.
+Use the "revision-notes-generator" skill to create revision notes from the attached study materials.
+Title the notes after the topic in the source, and output a .md file named after the source file
+(e.g. Physics_Chapter_5.pdf → Physics_Chapter_5.md).
 ```
 
+To override the title for a specific run, append:
+
 ```
-Create revision notes from the attached study materials using the "revision-notes-generator" skill.
-Title the notes after the topic in the source, and output a .md file named after the source file (e.g. Physics_Chapter_5.pdf → Physics_Chapter_5.md).
+Title: "Your Exact Title"
 ```
 
 ## Installation
@@ -82,3 +87,8 @@ skills/
 ```
 
 Then trigger by asking Claude to create revision notes, study notes, or topic summaries.
+
+## Known Limitations
+
+- Source-internal contradictions (the source disagreeing with itself across sections) can occasionally pass verification
+- The worked-example filter occasionally retains a trivial number-substitution example
