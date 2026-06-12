@@ -125,7 +125,8 @@ Use "revision-notes-generator" skill to create revision notes of the study mater
 ```
 
 ```
-Use the "revision-notes-generator" skill to create revision notes from the attached study materials. Title the notes after the topic in the source, and output a .md file named after the source file (e.g. Physics_Chapter_5.pdf → Physics_Chapter_5.md).
+Use the "revision-notes-generator" skill to create revision notes from the attached study materials. 
+Title the notes after the topic in the source, and output a .md file named after the source file (e.g. Physics_Chapter_5.pdf → Physics_Chapter_5.md).
 ```
 
 ---
