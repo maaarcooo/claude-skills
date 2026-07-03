@@ -10,12 +10,12 @@ This repository contains specialized skills for Claude and Claude Code. Skills a
 
 ### General Claude Skills
 
-| Skill | Purpose | Status |
-|-------|---------|--------|
-| [extracting-pdfs](#extracting-pdfs) | Extract and clean PDF content to markdown | Active |
-| [anki-flashcard-generator](#anki-flashcard-generator) | Generate Anki-importable flashcard decks | Active |
-| [revision-notes-generator](#revision-notes-generator) | Create concise revision notes from study materials | Active |
-| [handoff](#handoff) | Create structured handoff documents for session continuity | Active |
+| Skill | Purpose | Current Version | Status |
+|-------|---------|-----------------|--------|
+| [extracting-pdfs](#extracting-pdfs) | Extract and clean PDF content to markdown | - | Active |
+| [anki-flashcard-generator](#anki-flashcard-generator) | Generate Anki-importable flashcard decks | flashcard-v3.6 | Active |
+| [revision-notes-generator](#revision-notes-generator) | Create concise revision notes from study materials | notes-v3.6 | Active |
+| [handoff](#handoff) | Create structured handoff documents for session continuity | - | Active |
 
 ### Claude Code Skills
 
@@ -92,6 +92,8 @@ Use "extracting-pdfs" skill to convert this pdf into a markdown file.
 
 Generate study flashcards from PDF or Markdown content in Anki-importable format. Card design follows evidence-based principles with six specialised card types, built-in interference checking, and coverage guidance prioritised by examinability.
 
+**Current version:** `flashcard-v3.6`
+
 > **Full documentation:** See [`anki-flashcard-generator/README.md`](anki-flashcard-generator/README.md) for design principles, card types, output format, and card design rules.
 
 **Sample prompt for claude.ai:**
@@ -115,6 +117,8 @@ or code fences. The raw output will be saved directly to a text file.
 ### Revision Notes Generator
 
 Generate concise, accurate revision notes from PDF or Markdown study materials. Covers a 5-step process from reading through verification to structured markdown output, with writing guidelines prioritising conciseness, completeness, and accuracy.
+
+**Current version:** `notes-v3.6`
 
 > **Full documentation:** See [`revision-notes-generator/README.md`](revision-notes-generator/README.md) for writing guidelines, output format, and the full process.
 
@@ -213,7 +217,7 @@ The original PDF conversion skill using visual PDF understanding.
 
 ## Versioning
 
-This repository uses unified versioning. All skills share a single version number. See [Releases](../../releases) for version history.
+This repository uses per-skill version labels. The current study-generation labels are `flashcard-v3.6` for `anki-flashcard-generator` and `notes-v3.6` for `revision-notes-generator`. See [Releases](../../releases) for version history.
 
 ## License
 

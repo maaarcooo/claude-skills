@@ -1,6 +1,6 @@
 # Anki Flashcard Generator
 
-> **Source:** Evolved from [anki-flashcard/prompt-v4.txt](https://github.com/maaarcooo/llm-custom-instructions/blob/main/anki-flashcard/prompt-v4.txt). Current skill version: **v3.6**. A standalone fallback prompt with full instruction parity is maintained as `anki-flashcard-prompt-v5.md` for when the skill feature is unavailable.
+> **Source:** Evolved from [anki-flashcard/prompt-v4.txt](https://github.com/maaarcooo/llm-custom-instructions/blob/main/anki-flashcard/prompt-v4.txt). Current skill version: **flashcard-v3.6**. A standalone fallback prompt with full instruction parity is maintained as `anki-flashcard-prompt-v5.md` for when the skill feature is unavailable.
 
 Generate study flashcards from PDF or Markdown content in Anki-importable format. Cards are terse, exam-aligned, and quick to self-grade during review.
 
@@ -128,5 +128,5 @@ Then trigger by mentioning "Anki flashcard" or "Anki deck" in your conversation.
 
 ## Version Notes
 
-- **v3.6** — Rebuilt around the defect-blocking vs style-prescribing rule split. Softened atomicity to permit definition + associated-detail bundling, added bundle-or-split, banned circular answers, constrained the interference check to two cases, removed card-count anchors, scoped reverse cards to key terms, removed GCSE-era "Higher Tier" references, added the pipe-character exclusion. Validated on A-Level Physics sources inside and outside projects with convergent output
-- **v3.3–v3.5** — Principle-heavy versions (depth of processing, universal bidirectional cards, personal connection); produced over-elaborated decks and were superseded
+- **flashcard-v3.6** — Rebuilt around the defect-blocking vs style-prescribing rule split. Softened atomicity to permit definition + associated-detail bundling, added bundle-or-split, banned circular answers, constrained the interference check to two cases, removed card-count anchors, scoped reverse cards to key terms, removed GCSE-era "Higher Tier" references, added the pipe-character exclusion. Validated on A-Level Physics sources inside and outside projects with convergent output
+- **flashcard-v3.3–flashcard-v3.5** — Principle-heavy versions (depth of processing, universal bidirectional cards, personal connection); produced over-elaborated decks and were superseded

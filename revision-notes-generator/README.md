@@ -1,6 +1,6 @@
 # Revision Notes Generator
 
-> **Source:** Converted from [revision-notes/prompt-v2.txt](https://github.com/maaarcooo/llm-custom-instructions/blob/main/revision-notes/prompt-v2.txt)
+> **Source:** Converted from [revision-notes/prompt-v2.txt](https://github.com/maaarcooo/llm-custom-instructions/blob/main/revision-notes/prompt-v2.txt). Current skill version: **notes-v3.6**.
 
 Generate accurate, self-contained revision notes from PDF or Markdown study materials.
 
@@ -92,3 +92,7 @@ Then trigger by asking Claude to create revision notes, study notes, or topic su
 
 - Source-internal contradictions (the source disagreeing with itself across sections) can occasionally pass verification
 - The worked-example filter occasionally retains a trivial number-substitution example
+
+## Version Notes
+
+- **notes-v3.6** — Current revision-notes skill version, aligned with the v3.6 study-generation release numbering
