@@ -9,7 +9,10 @@ description: >
   handoff", "transfer context", "let's pick this up tomorrow", "save this so we
   can continue next time", or "/handoff". Do NOT trigger for general
   conversation summaries, meeting notes, or when the user simply asks "summarise
-  this conversation" without handoff/continuity intent.
+  this conversation" without handoff/continuity intent. Do NOT trigger when the
+  user uploads an existing handoff document to resume from — handoff documents
+  are self-contained and carry their own resumption instructions; this skill is
+  for creating them only.
 ---
 
 # Session Handoff Skill
@@ -22,6 +25,8 @@ Create a structured markdown document that enables a fresh Claude conversation t
 - The user signals they are stopping now and want to continue the work in a later conversation
 - Before ending a long or complex conversation with unfinished work
 - When approaching context limits and needing to start fresh
+
+**Not for resuming.** If the user has uploaded a handoff document and wants to continue from it, the document itself contains everything needed — follow its embedded resumption instruction and do not use this skill.
 
 ## Process
 
@@ -36,7 +41,7 @@ Silently assess:
 
 ### Step 2: Check for User Instructions
 
-If the user included specific instructions in their handoff request (e.g. "create a handoff, make sure to include X"), incorporate those.
+If the user included specific instructions in their handoff request (e.g. "create a handoff, make sure to include X", or a stated direction for the next session), incorporate those.
 
 ### Step 3: Clarify Ambiguities (Conditional)
 
@@ -44,9 +49,9 @@ If the user included specific instructions in their handoff request (e.g. "creat
 
 - **Scope** — The session covered multiple distinct topics and it is unclear which the handoff should cover.
 - **Decision status** — Something was discussed at length but not clearly resolved. Unclear whether to record it as settled or open.
-- **Priority / direction** — Multiple next steps are plausible and the ordering matters for the receiving session.
+- **Priority / direction** — Ask only when the conversation suggests the user already has a preferred next direction that was left unstated, and the ordering would materially change the handoff. **An undecided direction is a valid end state, not an ambiguity.** If the user simply has not chosen what to work on next, do not ask — record it (see Possible Directions below).
 
-**Do not ask:** open-ended questions ("anything specific you want me to capture?"), questions answered or implied in the conversation, or questions about minor details that would not change the handoff's usefulness.
+**Do not ask:** open-ended questions ("anything specific you want me to capture?", "what do you want to work on next?"), questions answered or implied in the conversation, or questions about minor details that would not change the handoff's usefulness.
 
 ### Step 4: Generate the Handoff Document
 
@@ -116,6 +121,8 @@ Every handoff follows this skeleton. Include or exclude sections based on work t
 
 > **Resumption instruction:** Review this document, then confirm your
 > understanding in 2–3 sentences before proceeding with the next step.
+> This document is self-contained — do not consult or load the handoff
+> skill; it is for creating handoffs, not resuming from them.
 
 **Date:** [YYYY-MM-DD]
 **Work type:** [Research / Writing / Planning / Building / Learning / Problem-Solving / Mixed]
@@ -164,14 +171,28 @@ already in Claude's memory system.]
 
 ## Next Steps
 
-[Ordered and immediately actionable. The first item is the very next thing to do.]
+[Ordered and immediately actionable. The first item is the very next thing to
+do. Mark any step only the user can perform with **(user)** — the receiving
+session should prompt for these, not attempt them.]
 
 1. [First action — specific and concrete]
-2. [Second action]
+2. **(user)** [Action the user must perform, e.g. reviewing output, publishing]
+
+## Possible Directions
+
+[Use INSTEAD of Next Steps when the user has deliberately not chosen what to
+work on next. State "Direction undecided" and list the candidate directions as
+options with a one-line case for each. The receiving session should present
+these as choices, not pick one and proceed.]
+
+- **[Candidate direction]** — [Why it might be next]
 
 ## Key References
 
-[Links, file names, or sources relevant to continuing. Only if meaningful.]
+[Links, file names, or sources relevant to continuing. Every artifact produced
+in this session (scripts, files, documents) must be referenced by a retrievable
+location — a path, URL, or repo — or explicitly marked as not preserved. A
+reference the receiving session cannot retrieve is not a reference.]
 ```
 
 ---
@@ -200,6 +221,7 @@ Before outputting, verify:
 - [ ] A fresh session could continue without asking the user to re-explain anything
 - [ ] Current State is a precise snapshot, not a vague summary
 - [ ] Every decision includes its rationale, and failed approaches are documented
-- [ ] Next steps are specific and immediately actionable
+- [ ] Next steps are specific and immediately actionable, with user-only actions marked **(user)** — or Possible Directions used if direction is undecided
+- [ ] Every in-session artifact has a retrievable location or is marked not preserved
 - [ ] No empty sections, no narrative filler, no duplicated memory content
 - [ ] Sized to the work: complete on decisions and rationale, lean everywhere else
