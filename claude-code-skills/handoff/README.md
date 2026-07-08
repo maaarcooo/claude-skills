@@ -54,26 +54,34 @@ session.
   (feature, bug fix, refactoring, config, architecture, testing).
 - **Adaptive depth** — Simple fixes produce lean handoffs (200-400 words).
   Complex multi-file work produces thorough ones (800-1500+ words).
-- **Handover chain** — Each handoff references the most recent previous one,
-  creating a traceable session history with key carryover notes.
+- **Handover chain** — Each handoff restates the still-live context from the
+  previous one, so the newest handoff is always self-sufficient while the
+  chain remains traceable.
 - **Reference, don't reproduce** — Files are referenced by path. The new
   session reads them directly. Code is included only when it captures
   something non-obvious.
 - **Dead-end capture** — Failed approaches are explicitly documented,
   preventing the new session from retrying them.
+- **Actor-aware next steps** — Steps only the user can perform (reviewing,
+  merging, publishing) are marked **(user)**, so the receiving session
+  prompts for them instead of attempting them.
+- **Undecided direction supported** — When the user has deliberately not
+  chosen what to work on next, the handoff records candidate directions as
+  options rather than inventing a priority.
 - **Built-in verification** — Each handoff includes a resumption instruction
   prompting the new session to confirm understanding before proceeding.
 - **Dynamic context** — Automatically detects existing handoffs in the project
   using shell injection, so the chain is maintained without manual tracking.
-- **Manual-only invocation** — The skill never triggers automatically. You
-  control when to create a handoff.
+- **Manual-only invocation** — The skill never triggers automatically
+  (`disable-model-invocation`). You control when to create a handoff, and a
+  resuming session can never mistakenly load it.
 
 ## How It Works
 
 1. **Invoke** `/handoff` (with optional focus scope).
 2. Claude creates `.claude/handoffs/` if it doesn't exist.
 3. Claude checks for previous handoffs and reads the most recent one for
-   chain continuity.
+   chain continuity, restating any still-live carryover.
 4. Claude classifies the session's work type and complexity.
 5. Claude generates the handoff and saves it to
    `.claude/handoffs/[YYYY-MM-DD]-[description].md`.
@@ -99,6 +107,10 @@ session.
 | Deep | 800-1500 words | Multi-component feature, complex bug, module refactor |
 | Extended | 1500+ words | Large architectural decisions, multiple workstreams |
 
+Sizing principle: complete on decisions, rationale, and failed approaches;
+ruthless on everything else. The word counts are calibration guidelines, not
+targets to fill.
+
 ## Document Structure
 
 ```
@@ -108,7 +120,7 @@ session.
 
 Date / Project / Work type / Status
 
-## Previous Session (if chain exists)
+## Previous Session (if chain exists — restates live carryover)
 ## Objective
 ## Current State
 ## What Was Done
@@ -117,22 +129,27 @@ Date / Project / Work type / Status
 ## Files Modified
 ## Issues / Errors Encountered
 ## Open Questions
-## Next Steps
+## Next Steps              (user-only actions marked (user))
+## Possible Directions     (replaces Next Steps when direction is undecided)
 ## Files to Review on Resume
 ```
 
 ## The Handover Chain
 
-Each handoff references the most recent previous one:
+Each handoff restates the still-live context from the most recent previous
+one:
 
 ```markdown
 ## Previous Session
 - Handoff: `.claude/handoffs/2026-06-05-auth-endpoints.md`
-- Key carryover: JWT validation works, refresh token endpoint still needed
+- Live carryover: JWT validation works, refresh token endpoint still needed
 ```
 
 This creates a queryable history. When something breaks sessions later, you
 can trace back through the chain to understand how the project evolved.
+Context that is no longer live is dropped at each link, so stale items do not
+propagate, and once around ~10 handoffs accumulate the skill suggests
+archiving older ones.
 
 ## File Structure
 
@@ -151,7 +168,8 @@ lives at user-level in `~/.claude/skills/handoff/`.
 
 ## Resuming from a Handoff
 
-In the new Claude Code session, tell Claude to read the handoff:
+Use the companion `/resume` command, or tell Claude to read the handoff
+directly:
 
 ```
 Read .claude/handoffs/2026-06-07-error-handling.md and continue from where
@@ -159,4 +177,7 @@ the last session left off.
 ```
 
 The receiving session reads the document, reviews the listed files, confirms
-understanding, and continues with the first next step.
+understanding, and continues with the first next step. Steps marked
+**(user)** are prompted to you rather than attempted, and if the handoff
+records Possible Directions instead of Next Steps, the session presents them
+for you to choose from.

@@ -62,5 +62,13 @@ After reading the handoff document:
    old, pause and ask the user to confirm the next step is still the right
    one before starting work.
 
+   **Exceptions — do not proceed automatically:**
+   - If the first next step is marked **(user)**, it is an action only the
+     user can perform. Prompt the user to do it (or to skip to the next
+     Claude-executable step) instead of attempting it.
+   - If the handoff lists **Possible Directions** instead of Next Steps, the
+     previous session ended with direction deliberately undecided. Present
+     the candidate directions as choices and wait for the user to pick one.
+
 Keep the summary concise. The goal is to get productive immediately, not to
 restate the entire handoff document.

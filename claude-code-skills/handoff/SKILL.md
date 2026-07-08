@@ -220,11 +220,23 @@ areas.]
 ## Next Steps
 
 [Ordered list of what to do next. The first item is the very next action.
-Clear enough that the receiving session knows exactly what to do first.]
+Clear enough that the receiving session knows exactly what to do first. Mark
+any step only the user can perform with **(user)** — the receiving session
+should prompt for these, not attempt them.]
 
 1. [First action — specific and concrete]
-2. [Second action]
+2. **(user)** [Action the user must perform, e.g. reviewing output, merging,
+   publishing a release]
 3. [Third action]
+
+## Possible Directions
+
+[Use INSTEAD of Next Steps when the user has deliberately not chosen what to
+work on next. State "Direction undecided" and list the candidate directions as
+options with a one-line case for each. The receiving session should present
+these as choices, not pick one and proceed.]
+
+- **[Candidate direction]** — [Why it might be next]
 
 ## Files to Review on Resume
 
@@ -252,7 +264,9 @@ that are central to understanding the current state of the work.]
    the most common failure mode in session handoffs: the new session retrying
    something that has already been tried and ruled out.
 5. **Actionable next steps** — Clear enough that the receiving session knows
-   exactly what to do first without asking.
+   exactly what to do first without asking. User-only actions marked
+   **(user)**. If direction is genuinely undecided, use Possible Directions
+   instead — do not invent a priority the user never set.
 6. **Files modified and files to review** — The new session can read these
    immediately to rebuild context from the code.
 
@@ -301,7 +315,9 @@ Before saving the handoff, verify:
 - [ ] Failed approaches are documented with reasons for rejection
 - [ ] The "Previous Session" carryover (if present) restates live context
       rather than only linking the previous file
-- [ ] Next steps are specific and immediately actionable
+- [ ] Next steps are specific and immediately actionable, with user-only
+      actions marked **(user)** — or Possible Directions used if direction
+      is undecided
 - [ ] File paths are accurate and complete
 - [ ] No code is reproduced that the new session could read from disk
 - [ ] No empty sections are included
