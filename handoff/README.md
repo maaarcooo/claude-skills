@@ -21,6 +21,9 @@ The handoff is designed to be downloaded and uploaded directly into a new conver
 - **Integrated project context** — Stable background information (constraints, preferences, domain knowledge) is folded into the document when relevant, avoiding the need for a separate reference file.
 - **Built-in verification** — Each handoff includes a resumption instruction that prompts the receiving session to confirm its understanding before proceeding, catching misinterpretations early.
 - **Dead-end capture** — Failed approaches and rejected directions are explicitly documented, preventing the new session from re-exploring them.
+- **Actor-aware next steps** — Steps only the user can perform are marked **(user)**, so the receiving session prompts for them instead of attempting them.
+- **Undecided direction supported** — When the user has deliberately not chosen what to work on next, the handoff records candidate directions as options rather than inventing a priority. The receiving session presents them as choices.
+- **Self-contained resumption** — The document carries its own resumption instructions. The receiving session does not need (and is instructed not to load) this skill.
 
 ## When to Use
 
@@ -29,13 +32,15 @@ The handoff is designed to be downloaded and uploaded directly into a new conver
 - **Switching focus** — Save state before moving to a different task, so you can return later.
 - **Multi-session projects** — Any work that spans more than one conversation benefits from structured continuity.
 
+The skill triggers on creation requests only. Uploading an existing handoff to resume from it does not (and should not) trigger the skill.
+
 ## How It Works
 
-1. **Trigger** — Ask Claude to create a handoff (e.g. "create a handoff", "/handoff"). Include any specific instructions about what to capture.
+1. **Trigger** — Ask Claude to create a handoff (e.g. "create a handoff", "/handoff"). Include any specific instructions about what to capture, or a chosen direction for the next session if you have one.
 2. **Classification** — Claude analyses the session to determine the work type and complexity tier, then selects the appropriate document structure.
-3. **Clarification (conditional)** — If the session contains genuine ambiguities (e.g. multiple topics with unclear scope, unsettled decisions, competing priorities for next steps), Claude asks at most 2-3 short, targeted questions before generating. If the session state is clear, this step is skipped entirely.
-4. **Generation** — Claude produces the handoff document, capturing objective, current state, progress, decisions with rationale, failed approaches, open questions, next steps, and any relevant project context.
-5. **Output** — The handoff is saved as a downloadable markdown file (`handoff-[description].md`).
+3. **Clarification (conditional)** — If the session contains genuine ambiguities (e.g. multiple topics with unclear scope, or unsettled decisions), Claude asks at most 2-3 short, targeted questions before generating. An undecided next direction is not treated as an ambiguity: Claude records the candidate directions instead of asking you to choose. If the session state is clear, this step is skipped entirely.
+4. **Generation** — Claude produces the handoff document, capturing objective, current state, progress, decisions with rationale, failed approaches, open questions, next steps (or possible directions), and any relevant project context.
+5. **Output** — The handoff is saved as a downloadable markdown file (`YYYY-MM-DD-handoff-[description].md`). The date prefix keeps multiple handoffs sortable and prevents filename collisions.
 
 ## Work Types
 
@@ -60,7 +65,7 @@ The skill classifies sessions into one of seven categories, each with structural
 | Deep | 1200–2500 words | Complex work with significant accumulated context and many decisions |
 | Extended | 2500+ words | Extensive sessions with large decision chains or multiple workstreams |
 
-The skill prioritises completeness over compression. A handoff that is slightly too long is far less costly than one that forces the user to re-explain context.
+Sizing principle: complete on decisions, rationale, and failed approaches; ruthless on everything else. The receiving session pays to read every word, and an overlong handoff buries the next-step signal. The handoff fails only if the user has to re-explain something.
 
 ## Document Structure
 
@@ -69,7 +74,8 @@ Every handoff follows this skeleton, with sections included or excluded based on
 ```
 # Handoff: [Descriptive Title]
 
-> Resumption instruction (verification prompt for the receiving session)
+> Resumption instruction (verification prompt; notes the document is
+> self-contained and the handoff skill should not be loaded)
 
 Date / Work type / Status
 
@@ -80,17 +86,18 @@ Date / Work type / Status
 ## Approaches That Did Not Work
 ## Project Context
 ## Open Questions
-## Next Steps
-## Key References
+## Next Steps            (user-only actions marked (user))
+## Possible Directions   (replaces Next Steps when direction is undecided)
+## Key References        (every in-session artifact gets a retrievable location)
 ```
 
 ## Resuming from a Handoff
 
 1. Start a fresh Claude conversation
 2. Upload or paste the handoff markdown file
-3. The receiving session reads the document, confirms its understanding in 2–3 sentences, then continues with the first next step
+3. The receiving session reads the document, confirms its understanding in 2–3 sentences, then continues with the first next step — or, if the handoff records Possible Directions instead, presents them for you to choose from
 
-The handoff is designed so that no additional explanation is needed from the user. The receiving session should be able to proceed immediately after the brief verification exchange.
+The handoff is self-contained: no additional explanation is needed from the user, and the handoff skill itself is not required in the receiving conversation. Steps marked **(user)** will be prompted to you rather than attempted by Claude.
 
 ## Installation
 
