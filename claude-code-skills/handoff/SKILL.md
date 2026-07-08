@@ -36,13 +36,31 @@ longer live should be dropped, so stale items do not propagate forever.
 `.claude/handoffs/`, suggest to the user that older ones be archived or
 deleted — superseded handoffs add noise when listing and resuming.
 
+## Coverage rule
+
+**No discussed topic disappears.** Every substantive discussion thread in the
+session must map to exactly one of:
+
+- **Decisions Made** — an outcome was reached: record it with rationale and
+  provenance
+- **Approaches That Did Not Work** — a direction was rejected: record it with
+  the reason (technical failure or user veto)
+- **Open Discussions** — explored but not concluded: record the topic, the
+  positions considered, and why it was left unresolved
+
+When unsure whether a discussion was substantive enough to record, include
+its conclusion — a one-line entry costs little, a lost thread costs the user
+a re-explanation. Capture the *residue* of each discussion (what was
+concluded and why, or why nothing was concluded), never the back-and-forth
+itself.
+
 ## Process
 
 1. Create `.claude/handoffs/` if it does not exist: `mkdir -p .claude/handoffs`
 2. Classify the work type and complexity to determine structure and depth
 3. If previous handoffs exist, read the most recent one and apply the
    carryover rule above
-4. Generate the handoff document
+4. Generate the handoff document, applying the coverage rule
 5. Save to `.claude/handoffs/[YYYY-MM-DD]-[description].md`
 
 ---
@@ -104,7 +122,9 @@ Assess the complexity of the work to determine how comprehensive the handoff
 should be. The codebase provides significant context, so the handoff captures
 what the code cannot: intent, rationale, failed approaches, and session-specific
 state. Be complete on decisions, rationale, and failed approaches; ruthless on
-everything else.
+everything else. The coverage rule takes precedence over the word counts: if
+recording every discussion's residue pushes past a tier's range, that is
+acceptable — trim narrative, never conclusions.
 
 ### Light (roughly 200-400 words)
 Simple, focused tasks. One file or a small change, few decisions, clear next
@@ -146,6 +166,9 @@ rather than reproducing content.
 
 > **Resumption instruction:** Read this handoff, review the listed files,
 > then confirm your understanding in 2-3 sentences before proceeding.
+> Items marked (user) are user-stated: decisions so marked are fixed and
+> must not be revisited without asking; steps so marked must be prompted
+> to the user, not attempted.
 
 **Date:** [YYYY-MM-DD]
 **Project:** [project path]
@@ -183,20 +206,35 @@ history.]
 
 ## Decisions Made
 
-[Each decision with its rationale. The rationale prevents the new session from
-relitigating settled questions. Without the "why", the new session may
-unknowingly reverse a carefully considered choice.]
+[Each decision with its rationale AND its origin. Mark decisions that came
+from the user — explicit requirements, directions, vetoes, stated opinions —
+with **(user)**: these are fixed, and the receiving session must not revisit
+them without asking. Unmarked decisions are session choices, revisable with
+good reason. The user accepting a Claude proposal counts as unmarked unless
+the user added a reason of their own.]
 
+- **(user)** **[Requirement/direction]** — [The user's stated reason, if given]
 - **[Decision]** — [Why this was chosen. What alternatives were considered.]
 
 ## Approaches That Did Not Work
 
-[Directions explored and rejected. Include what was tried and why it failed or
-was abandoned. This is one of the highest-value sections — it prevents the
-most common failure mode: the new session repeating work that has already been
-tried and rejected.]
+[Directions explored and rejected. Include what was tried and why it failed
+or was abandoned. Distinguish HOW it was rejected: if it failed technically,
+give the failure; if the user rejected it, say so and capture their stated
+reason — a user veto is not evidence the approach cannot work, and the
+receiving session needs to know the difference.]
 
 - **[Approach]** — [Why it did not work]
+- **[Approach]** — Rejected by user: [their stated reason]
+
+## Open Discussions
+
+[Topics discussed but not concluded. For each: the topic, the positions or
+options considered, and why it was left unresolved (ran out of time, needs
+information, user undecided). Without this section, unconcluded threads
+vanish and the next session unknowingly starts them from scratch.]
+
+- **[Topic]** — Considered: [positions/options]. Unresolved because: [reason]
 
 ## Files Modified
 
@@ -257,17 +295,25 @@ that are central to understanding the current state of the work.]
 2. **Precise current state** — Where exactly the work stands right now as a
    state description, not a narrative. What exists, what works, what is broken,
    what is incomplete.
-3. **Decisions with rationale** — The reasoning behind decisions is more
-   valuable than the decisions themselves. Without rationale, the new session
-   may unknowingly reverse a carefully considered choice.
-4. **Failed approaches** — What was tried and rejected, and why. This prevents
-   the most common failure mode in session handoffs: the new session retrying
-   something that has already been tried and ruled out.
-5. **Actionable next steps** — Clear enough that the receiving session knows
+3. **Decisions with rationale and provenance** — The reasoning behind decisions
+   is more valuable than the decisions themselves, and the origin determines
+   how the receiving session treats them: user-stated requirements are fixed,
+   session choices are revisable.
+4. **User-stated requirements, directions, constraints, and opinions** —
+   Everything the user said about what they want, what is off-limits, and how
+   they want the work done that is not obvious from the code. These carry
+   the **(user)** marker wherever they appear.
+5. **Failed approaches, with how they failed** — Technical failure vs user
+   rejection, each with its reason. This prevents the most common failure mode
+   in session handoffs: the new session retrying something already ruled out —
+   or wrongly treating a user veto as a technical impossibility.
+6. **Every substantive discussion's residue** — Per the coverage rule: as a
+   decision, a rejected approach, or an open discussion. No thread vanishes.
+7. **Actionable next steps** — Clear enough that the receiving session knows
    exactly what to do first without asking. User-only actions marked
    **(user)**. If direction is genuinely undecided, use Possible Directions
    instead — do not invent a priority the user never set.
-6. **Files modified and files to review** — The new session can read these
+8. **Files modified and files to review** — The new session can read these
    immediately to rebuild context from the code.
 
 ### Include when relevant
@@ -283,8 +329,6 @@ that are central to understanding the current state of the work.]
   was agreed upon but not yet fully implemented.
 - **Environment-specific details** — Ports, config values, paths, service URLs,
   environment variables that affect the work.
-- **User preferences or constraints** — Things the user stated about how they
-  want the work done that are not obvious from the code.
 
 ### Exclude
 
@@ -295,8 +339,10 @@ that are central to understanding the current state of the work.]
 - **General knowledge** — Do not explain frameworks, libraries, or concepts
   Claude already knows. "We discussed how middleware works" adds nothing.
   "Decided to use middleware over route-level auth because [reason]" adds value.
-- **Conversational narrative** — Capture state, not history. Not "we discussed
-  whether to use middleware" but "decided to use middleware because [reason]."
+- **Conversational narrative** — Capture each discussion's residue, not its
+  back-and-forth. Not "we discussed whether to use middleware, first
+  considering X, then the user said Y..." but "decided to use middleware
+  because [reason]" — or, if unconcluded, an Open Discussions entry.
 - **Verbose command output** — Summarise results, do not paste full terminal
   output or tool responses.
 - **Intermediate reasoning** — If reasoning reached a conclusion, capture the
@@ -310,9 +356,13 @@ Before saving the handoff, verify:
 
 - [ ] A fresh session reading this document could continue without asking the
       user to re-explain anything
+- [ ] Every substantive discussion from the session appears as a decision, a
+      rejected approach, or an open discussion — no thread has vanished
 - [ ] The current state is a precise snapshot, not a vague summary
-- [ ] Every decision includes its rationale
-- [ ] Failed approaches are documented with reasons for rejection
+- [ ] Every decision includes its rationale, and user-originated decisions,
+      requirements, and vetoes carry the **(user)** marker
+- [ ] Failed approaches are documented with reasons, distinguishing technical
+      failure from user rejection
 - [ ] The "Previous Session" carryover (if present) restates live context
       rather than only linking the previous file
 - [ ] Next steps are specific and immediately actionable, with user-only

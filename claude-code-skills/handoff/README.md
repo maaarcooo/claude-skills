@@ -18,8 +18,8 @@ the new session repeating failed approaches.
 
 The `/handoff` command generates a structured markdown document that captures
 everything a fresh session needs that the codebase alone cannot provide:
-objective, decisions with rationale, failed approaches, exact error messages,
-and clear next steps.
+objective, decisions with rationale and origin, failed approaches, open
+discussions, exact error messages, and clear next steps.
 
 Each handoff references the previous one, creating a **handover chain** that
 gives any session a traceable history of the project's evolution across
@@ -54,14 +54,23 @@ session.
   (feature, bug fix, refactoring, config, architecture, testing).
 - **Adaptive depth** — Simple fixes produce lean handoffs (200-400 words).
   Complex multi-file work produces thorough ones (800-1500+ words).
+- **Complete discussion coverage** — Every substantive discussion thread is
+  captured as its residue: a decision with rationale, a rejected approach
+  with reason, or an open discussion. No thread silently vanishes between
+  sessions.
+- **Decision provenance** — Decisions that came from you (requirements,
+  directions, vetoes, opinions) are marked **(user)** and treated as fixed by
+  the receiving session. Unmarked decisions are session choices, revisable
+  with good reason.
 - **Handover chain** — Each handoff restates the still-live context from the
   previous one, so the newest handoff is always self-sufficient while the
   chain remains traceable.
 - **Reference, don't reproduce** — Files are referenced by path. The new
   session reads them directly. Code is included only when it captures
   something non-obvious.
-- **Dead-end capture** — Failed approaches are explicitly documented,
-  preventing the new session from retrying them.
+- **Dead-end capture** — Failed approaches are explicitly documented with how
+  they failed: technical failure and user rejection are distinguished, so a
+  veto is never mistaken for an impossibility.
 - **Actor-aware next steps** — Steps only the user can perform (reviewing,
   merging, publishing) are marked **(user)**, so the receiving session
   prompts for them instead of attempting them.
@@ -83,8 +92,9 @@ session.
 3. Claude checks for previous handoffs and reads the most recent one for
    chain continuity, restating any still-live carryover.
 4. Claude classifies the session's work type and complexity.
-5. Claude generates the handoff and saves it to
-   `.claude/handoffs/[YYYY-MM-DD]-[description].md`.
+5. Claude generates the handoff — applying the coverage rule so every
+   discussion lands as a decision, rejected approach, or open discussion —
+   and saves it to `.claude/handoffs/[YYYY-MM-DD]-[description].md`.
 
 ## Work Types
 
@@ -108,8 +118,8 @@ session.
 | Extended | 1500+ words | Large architectural decisions, multiple workstreams |
 
 Sizing principle: complete on decisions, rationale, and failed approaches;
-ruthless on everything else. The word counts are calibration guidelines, not
-targets to fill.
+ruthless on everything else. The coverage rule takes precedence over the word
+counts — conclusions are never trimmed for length, narrative always is.
 
 ## Document Structure
 
@@ -124,8 +134,9 @@ Date / Project / Work type / Status
 ## Objective
 ## Current State
 ## What Was Done
-## Decisions Made
-## Approaches That Did Not Work
+## Decisions Made          (user-originated decisions marked (user))
+## Approaches That Did Not Work  (technical failure vs user veto)
+## Open Discussions        (explored but unconcluded threads)
 ## Files Modified
 ## Issues / Errors Encountered
 ## Open Questions
@@ -177,7 +188,7 @@ the last session left off.
 ```
 
 The receiving session reads the document, reviews the listed files, confirms
-understanding, and continues with the first next step. Steps marked
-**(user)** are prompted to you rather than attempted, and if the handoff
-records Possible Directions instead of Next Steps, the session presents them
-for you to choose from.
+understanding, and continues with the first next step. Decisions marked
+**(user)** are treated as fixed. Steps marked **(user)** are prompted to you
+rather than attempted, and if the handoff records Possible Directions instead
+of Next Steps, the session presents them for you to choose from.
