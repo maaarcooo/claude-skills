@@ -1,0 +1,6 @@
+interface:
+  display_name: "Discuss"
+  short_description: "Clarify direction before work begins"
+  default_prompt: "Use $discuss to clarify the requirements and direction before starting work."
+policy:
+  allow_implicit_invocation: true

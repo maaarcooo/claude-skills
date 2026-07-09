@@ -1,0 +1,6 @@
+interface:
+  display_name: "Session Handoff"
+  short_description: "Capture task state for seamless continuation"
+  default_prompt: "Use $handoff to create a structured handoff for this task."
+policy:
+  allow_implicit_invocation: false
