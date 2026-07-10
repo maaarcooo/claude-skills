@@ -1,0 +1,16 @@
+interface:
+  display_name: revision notes generator
+  short_description: Generate concise, self-contained revision notes from PDF or Markdown
+    study materials. Use whenever asked to create revision notes, study notes, topic
+    summaries, or condensed notes from educational PDFs, Markdown files, textbooks,
+    or course materials (e.g. Save My Exams, PMT, A-Level or GCSE resources), even
+    if the word "revision" is not used. Outputs a markdown file.
+  icon_small: assets/icon.svg
+  icon_large: assets/icon.svg
+policy:
+  products:
+  - chatgpt
+  - codex
+  - api
+  - atlas
+  allow_implicit_invocation: true

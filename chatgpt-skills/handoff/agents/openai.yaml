@@ -1,0 +1,35 @@
+interface:
+  display_name: handoff
+  short_description: 'Create a structured handoff document for seamless continuity
+    across Claude
+
+    conversations. Use when the user explicitly asks to create a handoff, handover,
+
+    or session transfer document, or signals they want to stop now and continue
+
+    this work in a future conversation. Trigger phrases include: "create a handoff",
+
+    "handoff document", "handover", "save session", "continue later", "session
+
+    handoff", "transfer context", "let''s pick this up tomorrow", "save this so we
+
+    can continue next time", or "/handoff". Do NOT trigger for general
+
+    conversation summaries, meeting notes, or when the user simply asks "summarise
+
+    this conversation" without handoff/continuity intent. Do NOT trigger when the
+
+    user uploads an existing handoff document to resume from — handoff documents
+
+    are self-contained and carry their own resumption instructions; this skill is
+
+    for creating them only.'
+  icon_small: assets/icon.svg
+  icon_large: assets/icon.svg
+policy:
+  products:
+  - chatgpt
+  - codex
+  - api
+  - atlas
+  allow_implicit_invocation: true
