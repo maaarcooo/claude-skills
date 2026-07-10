@@ -1,14 +1,14 @@
-# Claude Skills
+# Agent Skills
 
-A collection of Claude Agentic Skills for intelligent document processing, study material generation, PDF extraction, and session continuity.
+A collection of skills for Claude.ai, Claude Code, ChatGPT, and Codex, covering document processing, study material generation, PDF extraction, discussion workflows, and session continuity.
 
 ## Overview
 
-This repository contains specialized skills for Claude and Claude Code. Skills are organized into two categories: **General Claude Skills** for document processing, study material generation, and session handoff (works in any Claude interface) and **Claude Code Skills** providing slash commands for session continuity in the Claude Code CLI.
+Skills are grouped by target platform. Each platform directory contains independently installable skill packages and may adapt shared workflows to the conventions of that platform.
 
 ## Skills Overview
 
-### General Claude Skills
+### Claude.ai Skills
 
 | Skill | Purpose | Current Version | Status |
 |-------|---------|-----------------|--------|
@@ -16,13 +16,33 @@ This repository contains specialized skills for Claude and Claude Code. Skills a
 | [anki-flashcard-generator](#anki-flashcard-generator) | Generate Anki-importable flashcard decks | flashcard-v3.6 | Active |
 | [revision-notes-generator](#revision-notes-generator) | Create concise revision notes from study materials | notes-v3.6 | Active |
 | [handoff](#handoff) | Create structured handoff documents for session continuity | - | Active |
+| [discuss](#discuss) | Discuss and clarify direction before starting work | - | Active |
+| [learn](#learn) | Support conceptual learning and understanding | - | Active |
 
 ### Claude Code Skills
 
 | Skill | Purpose | Status |
 |-------|---------|--------|
+| [discuss (Claude Code)](#discuss-claude-code) | `/discuss` command for clarifying direction before work | Active |
 | [handoff (Claude Code)](#handoff-claude-code) | `/handoff` slash command for session handoff | Active |
 | [resume](#resume) | `/resume` slash command to continue from a handoff | Active |
+
+### ChatGPT Skills
+
+| Skill | Purpose | Status |
+|-------|---------|--------|
+| [anki-flashcard-generator (ChatGPT)](#chatgpt-skills) | Generate Anki-importable flashcard decks | Active |
+| [handoff (ChatGPT)](#chatgpt-skills) | Create structured session handoffs | Active |
+| [learn (ChatGPT)](#chatgpt-skills) | Support conceptual learning and understanding | Active |
+| [revision-notes-generator (ChatGPT)](#chatgpt-skills) | Create concise revision notes from study materials | Active |
+
+### Codex Skills
+
+| Skill | Purpose | Status |
+|-------|---------|--------|
+| [discuss (Codex)](#codex-skills) | Discuss and clarify direction before implementation | Active |
+| [handoff (Codex)](#codex-skills) | Capture task state for continuation | Active |
+| [resume (Codex)](#codex-skills) | Resume work from a handoff document | Active |
 
 ### Archived Skills
 
@@ -34,50 +54,41 @@ This repository contains specialized skills for Claude and Claude Code. Skills a
 ## Project Structure
 
 ```
-claude-skills/
+agent-skills/
 ├── README.md
-├── extracting-pdfs/                    # PDF extraction skill (Active)
-│   ├── README.md                       # Skill documentation
-│   ├── SKILL.md                        # Skill definition & workflow
-│   ├── cleanup-patterns.md             # Reference: noise patterns to remove
-│   ├── image-handling.md               # Reference: processing extracted images
-│   ├── sentence-reflow.md              # Reference: fixing fragmented text
-│   └── table-formatting.md             # Reference: reconstructing malformed tables
-├── anki-flashcard-generator/           # Anki flashcard generation skill
-│   ├── README.md                       # Skill documentation
-│   └── SKILL.md
-├── revision-notes-generator/           # Revision notes generation skill
-│   ├── README.md                       # Skill documentation
-│   └── SKILL.md
-├── handoff/                            # Session handoff skill (General Claude)
-│   ├── README.md
-│   └── SKILL.md
+├── claude-ai-skills/                  # Skills for Claude.ai
+│   ├── anki-flashcard-generator/
+│   ├── discuss/
+│   ├── extracting-pdfs/
+│   ├── handoff/
+│   ├── learn/
+│   └── revision-notes-generator/
 ├── claude-code-skills/                 # Claude Code slash commands
-│   ├── handoff/                        # /handoff command
-│   │   ├── README.md
-│   │   └── SKILL.md
-│   └── resume/                         # /resume command
-│       ├── README.md
-│       └── SKILL.md
-└── archive/                            # Archived/legacy skills
-    ├── pdf-extract/                    # PDF extraction (development version)
-    │   ├── SKILL.md
-    │   ├── extract_pdf.py              # Core Python extraction script
-    │   ├── cleanup-patterns.md
-    │   ├── image-handling.md
-    │   ├── sentence-reflow.md
-    │   └── table-formatting.md
-    └── pdf-to-markdown-converter/      # Legacy skill (Deprecated)
-        └── SKILL.md
+│   ├── discuss/
+│   ├── handoff/
+│   └── resume/
+├── chatgpt-skills/                    # Skills exported from ChatGPT
+│   ├── anki-flashcard-generator/
+│   ├── handoff/
+│   ├── learn/
+│   └── revision-notes-generator/
+├── codex-skills/                      # Skills for Codex
+│   ├── discuss/
+│   ├── handoff/
+│   └── resume/
+└── archive/
+    └── claude-ai/                    # Archived Claude.ai skills
+        ├── pdf-extract/
+        └── pdf-to-markdown-converter/
 ```
 
-## Skills
+## Claude.ai Skills
 
 ### Extracting PDFs
 
 The primary skill for extracting PDF content to clean, organized markdown. Uses a 5-step workflow (Extract, Analyse, Clean, Organise, Output) with dual extraction methods, comprehensive image handling, and reference guides for common challenges.
 
-> **Full documentation:** See [`extracting-pdfs/README.md`](extracting-pdfs/README.md) for the complete workflow, CLI usage, dependencies, and reference guide details.
+> **Full documentation:** See [`claude-ai-skills/extracting-pdfs/README.md`](claude-ai-skills/extracting-pdfs/README.md) for the complete workflow, CLI usage, dependencies, and reference guide details.
 
 **Sample prompt:**
 
@@ -94,7 +105,7 @@ Generate study flashcards from PDF or Markdown content in Anki-importable format
 
 **Current version:** `flashcard-v3.6`
 
-> **Full documentation:** See [`anki-flashcard-generator/README.md`](anki-flashcard-generator/README.md) for design principles, card types, output format, and card design rules.
+> **Full documentation:** See [`claude-ai-skills/anki-flashcard-generator/README.md`](claude-ai-skills/anki-flashcard-generator/README.md) for design principles, card types, output format, and card design rules.
 
 **Sample prompt for claude.ai:**
 
@@ -120,7 +131,7 @@ Generate concise, accurate revision notes from PDF or Markdown study materials. 
 
 **Current version:** `notes-v3.6`
 
-> **Full documentation:** See [`revision-notes-generator/README.md`](revision-notes-generator/README.md) for writing guidelines, output format, and the full process.
+> **Full documentation:** See [`claude-ai-skills/revision-notes-generator/README.md`](claude-ai-skills/revision-notes-generator/README.md) for writing guidelines, output format, and the full process.
 
 **Sample prompts:**
 
@@ -141,13 +152,31 @@ Create structured handoff documents for seamless continuity across Claude conver
 
 The skill adapts its structure and depth to the type of work (research, writing, planning, building, learning, problem-solving) and the complexity of the session.
 
-> **Full documentation:** See [`handoff/README.md`](handoff/README.md) for work types, depth tiers, document structure, and usage instructions.
+> **Full documentation:** See [`claude-ai-skills/handoff/README.md`](claude-ai-skills/handoff/README.md) for work types, depth tiers, document structure, and usage instructions.
+
+---
+
+### Discuss
+
+Pause before starting work to clarify requirements, surface assumptions, and agree on direction.
+
+---
+
+### Learn
+
+Support requests for intellectual understanding with explanations adapted to the learner and topic.
 
 ---
 
 ## Claude Code Skills
 
 Slash commands designed for the Claude Code CLI. These are installed at user-level (`~/.claude/skills/`) and invoked with `/command` syntax.
+
+---
+
+### Discuss (Claude Code)
+
+A `/discuss` command that pauses implementation so requirements and direction can be clarified first.
 
 ---
 
@@ -167,15 +196,31 @@ A `/resume` slash command that loads a handoff document and gets you productive 
 
 ---
 
+## ChatGPT Skills
+
+The `chatgpt-skills/` directory contains the skill packages uploaded to and exported from ChatGPT, including the generated `agents/openai.yaml` metadata and icons.
+
+The collection currently includes Anki Flashcard Generator, Handoff, Learn, and Revision Notes Generator.
+
+---
+
+## Codex Skills
+
+The `codex-skills/` directory contains Codex adaptations of the coding workflow skills. They are installed under `~/.codex/skills/` and can be invoked by name, such as `$handoff` and `$resume`.
+
+The collection currently includes Discuss, Handoff, and Resume.
+
+---
+
 ## Archived Skills
 
-The following skills have been moved to the `archive/` folder. They are preserved for reference but are no longer actively maintained.
+The following Claude.ai skills have been moved to `archive/claude-ai/`. They are preserved for reference but are no longer actively maintained.
 
 ---
 
 ### PDF Extract
 
-> **Location:** `archive/pdf-extract/`
+> **Location:** `archive/claude-ai/pdf-extract/`
 
 The development/original version of the PDF extraction skill. Contains the core Python extraction script.
 
@@ -191,7 +236,7 @@ The development/original version of the PDF extraction skill. Contains the core 
 
 ### PDF to Markdown Converter
 
-> **Location:** `archive/pdf-to-markdown-converter/`
+> **Location:** `archive/claude-ai/pdf-to-markdown-converter/`
 
 The original PDF conversion skill using visual PDF understanding.
 
