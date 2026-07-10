@@ -88,13 +88,13 @@ session.
 ## How It Works
 
 1. **Invoke** `/handoff` (with optional focus scope).
-2. Claude creates `.claude/handoffs/` if it doesn't exist.
+2. Claude creates `handoffs/` at the repository root if it doesn't exist.
 3. Claude checks for previous handoffs and reads the most recent one for
    chain continuity, restating any still-live carryover.
 4. Claude classifies the session's work type and complexity.
 5. Claude generates the handoff — applying the coverage rule so every
    discussion lands as a decision, rejected approach, or open discussion —
-   and saves it to `.claude/handoffs/[YYYY-MM-DD]-[description].md`.
+   and saves it to `handoffs/[YYYY-MM-DD]-[description].md`.
 
 ## Work Types
 
@@ -152,7 +152,7 @@ one:
 
 ```markdown
 ## Previous Session
-- Handoff: `.claude/handoffs/2026-06-05-auth-endpoints.md`
+- Handoff: `handoffs/2026-06-05-auth-endpoints.md`
 - Live carryover: JWT validation works, refresh token endpoint still needed
 ```
 
@@ -165,17 +165,14 @@ archiving older ones.
 ## File Structure
 
 ```
-.claude/
-├── handoffs/
-│   ├── 2026-06-05-auth-endpoints.md
-│   ├── 2026-06-06-rate-limiting.md
-│   └── 2026-06-07-error-handling.md
-└── skills/
-    └── ...
+handoffs/
+├── 2026-06-05-auth-endpoints.md
+├── 2026-06-06-rate-limiting.md
+└── 2026-06-07-error-handling.md
 ```
 
-Handoff files are saved per-project in `.claude/handoffs/`. The skill itself
-lives at user-level in `~/.claude/skills/handoff/`.
+Handoff files are saved per-project in `handoffs/`. The skill itself lives at
+user-level in `~/.claude/skills/handoff/`.
 
 ## Resuming from a Handoff
 
@@ -183,7 +180,7 @@ Use the companion `/resume` command, or tell Claude to read the handoff
 directly:
 
 ```
-Read .claude/handoffs/2026-06-07-error-handling.md and continue from where
+Read handoffs/2026-06-07-error-handling.md and continue from where
 the last session left off.
 ```
 

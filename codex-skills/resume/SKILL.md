@@ -15,7 +15,8 @@ previous session left off.
 ## Available handoffs
 
 Use the available file-search or shell tools to list up to ten Markdown files
-in `.codex/handoffs/`, newest first.
+from `handoffs/`, root-level `*-handoff-*.md`, `.claude/handoffs/`, and
+`.codex/handoffs/`, newest first.
 
 If no handoffs exist, tell the user there are no handoff documents
 to resume from and suggest creating one with `$handoff` at the end of a
@@ -24,9 +25,9 @@ session.
 ## Which handoff to load
 
 If the user supplies a filename or partial filename alongside `$resume`, read
-the matching file from `.codex/handoffs/`. Accept either the full filename or
-a unique partial match against the listed files. If no unique match is found,
-list the available handoffs and ask the user to specify one.
+the matching file from those listed above. Accept either the full filename or
+a unique partial match. If no unique match is found, list the available
+handoffs and ask the user to specify one.
 
 If the user does not specify a handoff, read the most recent one.
 
@@ -42,7 +43,7 @@ After reading the handoff document:
      commits and uncommitted changes made after the handoff.
    - If it is not a git repository, compare file modification times against
      the handoff file instead:
-     `find . -newer .codex/handoffs/<handoff-file> -type f -not -path "./.codex/*" -not -path "./node_modules/*" -not -path "./.git/*"`
+     `find . -newer <selected-handoff-path> -type f -not -path "./handoffs/*" -not -path "./.claude/*" -not -path "./.codex/*" -not -path "./node_modules/*" -not -path "./.git/*"`
    - If drift is found, flag it explicitly in the summary and prefer the
      actual state of the files over the handoff's description wherever they
      disagree.

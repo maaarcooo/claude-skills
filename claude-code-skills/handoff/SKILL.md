@@ -20,7 +20,7 @@ aspect of the session. Otherwise, generate a full-session handoff.
 
 ## Previous handoffs
 
-!`ls -1t .claude/handoffs/*.md 2>/dev/null | head -5`
+!`ls -1t handoffs/*.md *-handoff-*.md .claude/handoffs/*.md .codex/handoffs/*.md 2>/dev/null | head -5`
 
 If previous handoffs exist above, read the most recent one and reference it
 at the top of the new handoff under a "Previous Session" heading.
@@ -33,7 +33,7 @@ the newest handoff should have everything still relevant. Context that is no
 longer live should be dropped, so stale items do not propagate forever.
 
 **Retention:** if more than ~10 handoffs have accumulated in
-`.claude/handoffs/`, suggest to the user that older ones be archived or
+`handoffs/`, suggest to the user that older ones be archived or
 deleted — superseded handoffs add noise when listing and resuming.
 
 ## Coverage rule
@@ -56,12 +56,12 @@ itself.
 
 ## Process
 
-1. Create `.claude/handoffs/` if it does not exist: `mkdir -p .claude/handoffs`
+1. Create `handoffs/` if it does not exist: `mkdir -p handoffs`
 2. Classify the work type and complexity to determine structure and depth
 3. If previous handoffs exist, read the most recent one and apply the
    carryover rule above
 4. Generate the handoff document, applying the coverage rule
-5. Save to `.claude/handoffs/[YYYY-MM-DD]-[description].md`
+5. Save to `handoffs/[YYYY-MM-DD]-[description].md`
 
 ---
 
@@ -177,7 +177,7 @@ rather than reproducing content.
 
 ## Previous Session
 <!-- Only if prior handoffs exist -->
-- Handoff: `.claude/handoffs/[previous-filename].md`
+- Handoff: `handoffs/[previous-filename].md`
 - Live carryover: [restate everything from earlier sessions that is still
   relevant — open questions, constraints, conventions. Self-sufficient, not
   just a pointer.]

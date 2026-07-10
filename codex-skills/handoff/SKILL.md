@@ -20,8 +20,8 @@ aspect of the task. Otherwise, generate a full-task handoff.
 ## Previous handoffs
 
 Use the available file-search or shell tools to list up to five Markdown files
-in `.codex/handoffs/`, newest first. If the directory does not exist or contains
-no handoffs, continue without a previous-session reference.
+from `handoffs/`, root-level `*-handoff-*.md`, `.claude/handoffs/`, and
+`.codex/handoffs/`, newest first.
 
 If previous handoffs exist, read the most recent one and reference it
 at the top of the new handoff under a "Previous Session" heading.
@@ -34,7 +34,7 @@ the newest handoff should have everything still relevant. Context that is no
 longer live should be dropped, so stale items do not propagate forever.
 
 **Retention:** if more than ~10 handoffs have accumulated in
-`.codex/handoffs/`, suggest to the user that older ones be archived or
+`handoffs/`, suggest to the user that older ones be archived or
 deleted — superseded handoffs add noise when listing and resuming.
 
 ## Coverage rule
@@ -57,12 +57,12 @@ itself.
 
 ## Process
 
-1. Create `.codex/handoffs/` if it does not exist
+1. Create `handoffs/` if it does not exist
 2. Classify the work type and complexity to determine structure and depth
 3. If previous handoffs exist, read the most recent one and apply the
    carryover rule above
 4. Generate the handoff document, applying the coverage rule
-5. Save to `.codex/handoffs/[YYYY-MM-DD]-[description].md`
+5. Save to `handoffs/[YYYY-MM-DD]-[description].md`
 
 ---
 
@@ -178,7 +178,7 @@ rather than reproducing content.
 
 ## Previous Session
 <!-- Only if prior handoffs exist -->
-- Handoff: `.codex/handoffs/[previous-filename].md`
+- Handoff: `handoffs/[previous-filename].md`
 - Live carryover: [restate everything from earlier sessions that is still
   relevant — open questions, constraints, conventions. Self-sufficient, not
   just a pointer.]

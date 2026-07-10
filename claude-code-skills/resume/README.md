@@ -38,8 +38,8 @@ mkdir -p ~/.claude/skills/resume
 
 ## What It Does
 
-1. Lists available handoffs in `.claude/handoffs/` (via dynamic shell
-   injection at load time)
+1. Lists available handoffs in `handoffs/` (via dynamic shell injection at
+   load time)
 2. Reads the most recent handoff, or the one matching your argument
 3. Verifies the handoff against reality: in a git repository it checks
    `git log` and `git status` for changes made after the handoff date; in a
@@ -69,7 +69,7 @@ first when:
 ## The Handoff/Resume Workflow
 
 ```
-End of session:    /handoff              → saves .claude/handoffs/2026-06-07-auth.md
+End of session:    /handoff              → saves handoffs/2026-06-07-auth.md
 Start of session:  /resume               → loads, verifies, reviews files, continues
 ```
 
@@ -92,11 +92,10 @@ Handoff documents are saved per-project:
 
 ```
 your-project/
-└── .claude/
-    └── handoffs/
-        ├── 2026-06-05-auth-endpoints.md
-        ├── 2026-06-06-rate-limiting.md
-        └── 2026-06-07-error-handling.md
+└── handoffs/
+    ├── 2026-06-05-auth-endpoints.md
+    ├── 2026-06-06-rate-limiting.md
+    └── 2026-06-07-error-handling.md
 ```
 
 ## Note on Non-Git Projects

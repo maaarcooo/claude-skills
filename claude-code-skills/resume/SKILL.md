@@ -15,7 +15,7 @@ previous session left off.
 
 ## Available handoffs
 
-!`ls -1t .claude/handoffs/*.md 2>/dev/null | head -10`
+!`ls -1t handoffs/*.md *-handoff-*.md .claude/handoffs/*.md .codex/handoffs/*.md 2>/dev/null | head -10`
 
 If no handoffs are listed above, tell the user there are no handoff documents
 to resume from and suggest creating one with `/handoff` at the end of a
@@ -23,10 +23,9 @@ session.
 
 ## Which handoff to load
 
-If arguments are provided ($ARGUMENTS), read that file from `.claude/handoffs/`.
-Accept either the full filename or a partial match against the files listed
-above. If no match is found, list the available handoffs and ask the user to
-specify.
+If arguments are provided ($ARGUMENTS), read the matching file from those
+listed above. Accept either the full filename or a partial match. If no match
+is found, list the available handoffs and ask the user to specify.
 
 If no arguments are provided, read the most recent handoff (first file listed
 above).
@@ -43,7 +42,7 @@ After reading the handoff document:
      commits and uncommitted changes made after the handoff.
    - If it is not a git repository, compare file modification times against
      the handoff file instead:
-     `find . -newer .claude/handoffs/<handoff-file> -type f -not -path "./.claude/*" -not -path "./node_modules/*" -not -path "./.git/*"`
+     `find . -newer <selected-handoff-path> -type f -not -path "./handoffs/*" -not -path "./.claude/*" -not -path "./.codex/*" -not -path "./node_modules/*" -not -path "./.git/*"`
    - If drift is found, flag it explicitly in the summary and prefer the
      actual state of the files over the handoff's description wherever they
      disagree.
