@@ -20,7 +20,7 @@ aspect of the session. Otherwise, generate a full-session handoff.
 
 ## Previous handoffs
 
-!`ls -1t handoffs/*.md *-handoff-*.md .claude/handoffs/*.md .codex/handoffs/*.md 2>/dev/null | head -5`
+!`ls -1t handoffs/*.md 2>/dev/null | head -5`
 
 If previous handoffs exist above, read the most recent one and reference it
 at the top of the new handoff under a "Previous Session" heading.

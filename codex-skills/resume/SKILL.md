@@ -15,8 +15,7 @@ previous session left off.
 ## Available handoffs
 
 Use the available file-search or shell tools to list up to ten Markdown files
-from `handoffs/`, root-level `*-handoff-*.md`, `.claude/handoffs/`, and
-`.codex/handoffs/`, newest first.
+from `handoffs/`, newest first.
 
 If no handoffs exist, tell the user there are no handoff documents
 to resume from and suggest creating one with `$handoff` at the end of a

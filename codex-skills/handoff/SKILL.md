@@ -20,8 +20,7 @@ aspect of the task. Otherwise, generate a full-task handoff.
 ## Previous handoffs
 
 Use the available file-search or shell tools to list up to five Markdown files
-from `handoffs/`, root-level `*-handoff-*.md`, `.claude/handoffs/`, and
-`.codex/handoffs/`, newest first.
+from `handoffs/`, newest first.
 
 If previous handoffs exist, read the most recent one and reference it
 at the top of the new handoff under a "Previous Session" heading.

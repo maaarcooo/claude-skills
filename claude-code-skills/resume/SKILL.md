@@ -15,7 +15,7 @@ previous session left off.
 
 ## Available handoffs
 
-!`ls -1t handoffs/*.md *-handoff-*.md .claude/handoffs/*.md .codex/handoffs/*.md 2>/dev/null | head -10`
+!`ls -1t handoffs/*.md 2>/dev/null | head -10`
 
 If no handoffs are listed above, tell the user there are no handoff documents
 to resume from and suggest creating one with `/handoff` at the end of a
