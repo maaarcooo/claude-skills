@@ -31,7 +31,7 @@ Skills are grouped by target platform. Each platform directory contains independ
 
 | Skill | Purpose | Status |
 |-------|---------|--------|
-| [anki-flashcard-generator (ChatGPT)](#chatgpt-skills) | Generate flashcard decks from study materials | Active |
+| [flashcard-generator (ChatGPT)](#chatgpt-skills) | Generate flashcard decks from study materials | Active |
 | [handoff (ChatGPT)](#chatgpt-skills) | Create structured session handoffs | Active |
 | [learn (ChatGPT)](#chatgpt-skills) | Support conceptual learning and understanding | Active |
 | [revision-notes-generator (ChatGPT)](#chatgpt-skills) | Create concise revision notes from study materials | Active |
@@ -68,7 +68,7 @@ agent-skills/
 │   ├── handoff/
 │   └── resume/
 ├── chatgpt-skills/                    # Skills exported from ChatGPT
-│   ├── anki-flashcard-generator/
+│   ├── flashcard-generator/
 │   ├── handoff/
 │   ├── learn/
 │   └── revision-notes-generator/
@@ -200,7 +200,7 @@ A `/resume` slash command that loads a handoff document and gets you productive 
 
 The `chatgpt-skills/` directory contains the skill packages uploaded to and exported from ChatGPT, including the generated `agents/openai.yaml` metadata and icons.
 
-The collection currently includes Anki Flashcard Generator, Handoff, Learn, and Revision Notes Generator.
+The collection currently includes Flashcard Generator, Handoff, Learn, and Revision Notes Generator.
 
 ---
 

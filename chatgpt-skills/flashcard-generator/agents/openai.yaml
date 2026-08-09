@@ -1,0 +1,14 @@
+interface:
+  display_name: flashcard generator
+  short_description: Generate flashcard decks from PDF or Markdown study materials.
+    Use when the user asks for flashcards, a flashcard deck, or study cards from
+    source material. Outputs in importable format (Question | Answer).
+  icon_small: assets/icon.svg
+  icon_large: assets/icon.svg
+policy:
+  products:
+  - chatgpt
+  - codex
+  - api
+  - atlas
+  allow_implicit_invocation: true
