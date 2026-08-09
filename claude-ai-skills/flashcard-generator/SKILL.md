@@ -1,11 +1,11 @@
 ---
-name: anki-flashcard-generator
-description: Generate Anki flashcard decks from PDF or Markdown study materials. Use only when "Anki flashcard" or "Anki deck" is explicitly mentioned. Do not trigger for generic flashcard requests. Outputs in Anki-importable format (Question | Answer).
+name: flashcard-generator
+description: Generate flashcard decks from PDF or Markdown study materials. Use when the user asks for flashcards, a flashcard deck, or study cards from source material. Outputs in importable format (Question | Answer).
 ---
 
-# Anki Flashcard Generator
+# Flashcard Generator
 
-Generate study flashcards from PDF or Markdown content in Anki-importable format. Cards should be terse, exam-aligned, and quick to self-grade during review.
+Generate study flashcards from PDF or Markdown content. Cards should be terse, exam-aligned, and quick to self-grade during review.
 
 ## Process
 
@@ -20,18 +20,19 @@ Generate study flashcards from PDF or Markdown content in Anki-importable format
 
 This register is the priority. When any rule below conflicts with brevity, prefer brevity.
 
-- **One idea per card, judged flexibly.** Answers are one to two short sentences. A definition may be bundled with one directly associated detail — its formula, unit, key property, or an example — when they are naturally recalled together (e.g. impulse: definition plus F × t). Never bundle a reasoning chain or a second independent concept
+- **One idea per card, judged flexibly.** Answers are one to two short sentences. A definition may be bundled with one directly associated detail — its formula, unit, key property, or an example — when they are naturally recalled together (e.g. impulse: definition plus $F \times t$). Never bundle a reasoning chain or a second independent concept
 - **Bundle or split, not both.** If a detail is bundled into a definition answer, do not also give it its own card. If it has its own card, leave it out of the definition. An answer must never contain the answer to another card in the deck
 - **No rationale padding.** Do not append "because..." justifications to recall answers. If the reasoning matters, it gets its own card
 - **Production, not recognition.** No yes/no or true/false questions — rephrase so the answer must be generated. Not "Have quarks been observed in isolation? | No", but "In what combinations are quarks always observed? | Pairs (mesons) or groups of three (baryons)"
 - **Unambiguous.** Each question has exactly one correct answer. Rephrase vague questions ("What is important about X?") to target one specific property
 - **Plain language.** Simple, direct wording. Match the source's syllabus level
+- **LaTeX for equations.** Write all mathematical expressions using standard LaTeX notation: inline with `$...$` and display with `$$...$$`. For example, `$E_k = \frac{1}{2}mv^2$` rather than `Ek = ½mv²`. Use LaTeX for all symbols, fractions, subscripts, superscripts, and special characters in equations
 
 ## Card Types
 
 - **Definition** — `What is X? | [definition]`. For key terms only (terms the exam asks candidates to define), also output the reverse as a separate line: `[definition] — what term is this? | X`
 - **Recall** — single facts, values, units, equations
-- **Formula application** — alongside a formula card, optionally one single-step application: `R = V/I = 6/2 = 3 Ω`. Never multi-step
+- **Formula application** — alongside a formula card, optionally one single-step application: `$R = \frac{V}{I} = \frac{6}{2} = 3\;\Omega$`. Never multi-step
 - **Cloze** — `The SI unit of energy is the [...] | joule (J)`. Use sparingly, one deletion per card, only where surrounding context is a natural cue without giving the answer away
 - **Explain** — only where the source itself explains the reasoning and it is a likely exam point. Answer states the mechanism concisely, still within two sentences. Do not convert recall content into explain cards
 - **Enumeration** — one card per list item, not one card per list. A list answer may contain at most 3 items, and only if the source treats them as a single fact
@@ -74,10 +75,10 @@ Question | Answer
 What is the unit of electrical resistance? | Ohm (Ω)
 Define specific heat capacity | The energy required to raise the temperature of 1 kg of a substance by 1 °C
 The energy required to raise the temperature of 1 kg of a substance by 1 °C — what quantity is this? | Specific heat capacity
-What is the equation for kinetic energy? | Ek = ½mv²
+What is the equation for kinetic energy? | $E_k = \frac{1}{2}mv^2$
 The SI unit of energy is the [...] | joule (J)
 What is an alpha particle? | Two protons and two neutrons (a helium-4 nucleus). Stopped by a few centimetres of air
-What is impulse? | The change in momentum of an object when a force acts on it, equal to force × time (Ft = Δp)
+What is impulse? | The change in momentum of an object when a force acts on it, equal to force times time ($F t = \Delta p$)
 What is the worst-case time complexity of binary search? | O(log n)
 Explain why resistance increases with temperature in a metal | Ions vibrate with greater amplitude, so electrons collide with them more frequently
 How does the elastic limit differ from the limit of proportionality? | Limit of proportionality: extension stops being proportional to force. Elastic limit: material stops returning to its original shape. Proportionality limit is reached first

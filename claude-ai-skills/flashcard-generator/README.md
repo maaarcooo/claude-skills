@@ -1,8 +1,8 @@
-# Anki Flashcard Generator
+# Flashcard Generator
 
-> **Source:** Evolved from [anki-flashcard/prompt-v4.txt](https://github.com/maaarcooo/llm-custom-instructions/blob/main/anki-flashcard/prompt-v4.txt). Current skill version: **flashcard-v3.6**. A standalone fallback prompt with full instruction parity is maintained as `anki-flashcard-prompt-v5.md` for when the skill feature is unavailable.
+> **Source:** Evolved from [anki-flashcard/prompt-v4.txt](https://github.com/maaarcooo/llm-custom-instructions/blob/main/anki-flashcard/prompt-v4.txt). Current skill version: **flashcard-v3.7**. A standalone fallback prompt with full instruction parity is maintained as `flashcard-prompt-v5.md` for when the skill feature is unavailable.
 
-Generate study flashcards from PDF or Markdown content in Anki-importable format. Cards are terse, exam-aligned, and quick to self-grade during review.
+Generate study flashcards from PDF or Markdown content. Cards are terse, exam-aligned, and quick to self-grade during review.
 
 ## The Problem
 
@@ -15,7 +15,7 @@ A deliberately small rule set, split into two types:
 - **Defect-blocking rules** (strict): no yes/no questions, no pipe characters in content, no diagram-dependent cards, no circular answers, accuracy verification with error flagging. These prevent objective failures and never shape style.
 - **Style conveyed by example** (flexible): the terse register, bundling judgment, and card-type selection are taught through concrete example cards rather than prescriptive principles, leaving the model room to adapt per situation.
 
-This split is the result of testing across model versions: prescriptive style rules (rigid atomicity targets, mandatory "why/how" framing, universal bidirectional cards) were found to globally distort deck character, while defect-blocking rules cost nothing. Output is in Anki's native import format (`Question | Answer`, one card per line).
+This split is the result of testing across model versions: prescriptive style rules (rigid atomicity targets, mandatory "why/how" framing, universal bidirectional cards) were found to globally distort deck character, while defect-blocking rules cost nothing. Output is in standard importable format (`Question | Answer`, one card per line).
 
 ## Key Features
 
@@ -28,7 +28,7 @@ This split is the result of testing across model versions: prescriptive style ru
 
 ## When to Use
 
-Only when "Anki flashcard" or "Anki deck" is explicitly mentioned. The skill does not trigger for generic flashcard requests.
+When the user asks for flashcards, a flashcard deck, or study cards from source material.
 
 ## How It Works
 
@@ -49,6 +49,7 @@ The terse register is the priority — when any rule conflicts with brevity, bre
 - **Production over recognition**: no yes/no or true/false questions; rephrase so the answer must be generated
 - **Unambiguous**: each question has exactly one correct answer
 - **Plain language**: simple, direct wording matched to the source's syllabus level
+- **LaTeX for equations**: all mathematical expressions use standard LaTeX notation (`$...$` inline, `$$...$$` display) for KaTeX rendering
 
 ## Card Types
 
@@ -87,10 +88,10 @@ One card per line, question and answer separated by a single pipe. No preamble, 
 What is the unit of electrical resistance? | Ohm (Ω)
 Define specific heat capacity | The energy required to raise the temperature of 1 kg of a substance by 1 °C
 The energy required to raise the temperature of 1 kg of a substance by 1 °C — what quantity is this? | Specific heat capacity
-What is the equation for kinetic energy? | Ek = ½mv²
+What is the equation for kinetic energy? | $E_k = \frac{1}{2}mv^2$
 The SI unit of energy is the [...] | joule (J)
 What is an alpha particle? | Two protons and two neutrons (a helium-4 nucleus). Stopped by a few centimetres of air
-What is impulse? | The change in momentum of an object when a force acts on it, equal to force × time (Ft = Δp)
+What is impulse? | The change in momentum of an object when a force acts on it, equal to force times time ($F t = \Delta p$)
 What is the worst-case time complexity of binary search? | O(log n)
 Explain why resistance increases with temperature in a metal | Ions vibrate with greater amplitude, so electrons collide with them more frequently
 How does the elastic limit differ from the limit of proportionality? | Limit of proportionality: extension stops being proportional to force. Elastic limit: material stops returning to its original shape. Proportionality limit is reached first
@@ -101,14 +102,14 @@ How does the elastic limit differ from the limit of proportionality? | Limit of 
 **claude.ai:**
 
 ```
-Create an Anki flashcard deck from the attached study materials using the "anki-flashcard-generator" skill.
+Create a flashcard deck from the attached study materials using the "flashcard-generator" skill.
 Output the deck as a .txt file named after the source file (e.g. Physics_Chapter_5.pdf → Physics_Chapter_5.txt).
 ```
 
 **Claude API:**
 
 ```
-Create an Anki flashcard deck from the attached study materials using the "anki-flashcard-generator" skill.
+Create a flashcard deck from the attached study materials using the "flashcard-generator" skill.
 Output only the flashcard lines in the format "Question | Answer", one per line.
 Do not include any preamble, headers, explanations, markdown formatting,
 or code fences. The raw output will be saved directly to a text file.
@@ -120,13 +121,14 @@ Place the `SKILL.md` file in your Claude skills directory:
 
 ```
 skills/
-└── anki-flashcard-generator/
+└── flashcard-generator/
     └── SKILL.md
 ```
 
-Then trigger by mentioning "Anki flashcard" or "Anki deck" in your conversation.
+Then trigger by asking for flashcards from source material.
 
 ## Version Notes
 
+- **flashcard-v3.7** — Renamed from anki-flashcard-generator to flashcard-generator. Broadened trigger to all flashcard requests. Added LaTeX equation formatting (KaTeX-compatible `$...$` / `$$...$$`) for mathematical expressions
 - **flashcard-v3.6** — Rebuilt around the defect-blocking vs style-prescribing rule split. Softened atomicity to permit definition + associated-detail bundling, added bundle-or-split, banned circular answers, constrained the interference check to two cases, removed card-count anchors, scoped reverse cards to key terms, removed GCSE-era "Higher Tier" references, added the pipe-character exclusion. Validated on A-Level Physics sources inside and outside projects with convergent output
 - **flashcard-v3.3–flashcard-v3.5** — Principle-heavy versions (depth of processing, universal bidirectional cards, personal connection); produced over-elaborated decks and were superseded

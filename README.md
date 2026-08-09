@@ -13,7 +13,7 @@ Skills are grouped by target platform. Each platform directory contains independ
 | Skill | Purpose | Current Version | Status |
 |-------|---------|-----------------|--------|
 | [extracting-pdfs](#extracting-pdfs) | Extract and clean PDF content to markdown | - | Active |
-| [anki-flashcard-generator](#anki-flashcard-generator) | Generate Anki-importable flashcard decks | flashcard-v3.6 | Active |
+| [flashcard-generator](#flashcard-generator) | Generate flashcard decks from study materials | flashcard-v3.7 | Active |
 | [revision-notes-generator](#revision-notes-generator) | Create concise revision notes from study materials | notes-v3.6 | Active |
 | [handoff](#handoff) | Create structured handoff documents for session continuity | - | Active |
 | [discuss](#discuss) | Discuss and clarify direction before starting work | - | Active |
@@ -31,7 +31,7 @@ Skills are grouped by target platform. Each platform directory contains independ
 
 | Skill | Purpose | Status |
 |-------|---------|--------|
-| [anki-flashcard-generator (ChatGPT)](#chatgpt-skills) | Generate Anki-importable flashcard decks | Active |
+| [anki-flashcard-generator (ChatGPT)](#chatgpt-skills) | Generate flashcard decks from study materials | Active |
 | [handoff (ChatGPT)](#chatgpt-skills) | Create structured session handoffs | Active |
 | [learn (ChatGPT)](#chatgpt-skills) | Support conceptual learning and understanding | Active |
 | [revision-notes-generator (ChatGPT)](#chatgpt-skills) | Create concise revision notes from study materials | Active |
@@ -57,7 +57,7 @@ Skills are grouped by target platform. Each platform directory contains independ
 agent-skills/
 ├── README.md
 ├── claude-ai-skills/                  # Skills for Claude.ai
-│   ├── anki-flashcard-generator/
+│   ├── flashcard-generator/
 │   ├── discuss/
 │   ├── extracting-pdfs/
 │   ├── handoff/
@@ -99,25 +99,25 @@ Use "extracting-pdfs" skill to convert this pdf into a markdown file.
 
 ---
 
-### Anki Flashcard Generator
+### Flashcard Generator
 
-Generate study flashcards from PDF or Markdown content in Anki-importable format. Card design follows evidence-based principles with six specialised card types, built-in interference checking, and coverage guidance prioritised by examinability.
+Generate study flashcards from PDF or Markdown content. Card design follows evidence-based principles with six specialised card types, built-in interference checking, coverage guidance prioritised by examinability, and LaTeX equation support (KaTeX-compatible).
 
-**Current version:** `flashcard-v3.6`
+**Current version:** `flashcard-v3.7`
 
-> **Full documentation:** See [`claude-ai-skills/anki-flashcard-generator/README.md`](claude-ai-skills/anki-flashcard-generator/README.md) for design principles, card types, output format, and card design rules.
+> **Full documentation:** See [`claude-ai-skills/flashcard-generator/README.md`](claude-ai-skills/flashcard-generator/README.md) for design principles, card types, output format, and card design rules.
 
 **Sample prompt for claude.ai:**
 
 ```
-Create an Anki flashcard deck from the attached study materials using the "anki-flashcard-generator" skill.
+Create a flashcard deck from the attached study materials using the "flashcard-generator" skill.
 Output the deck as a .txt file named after the source file (e.g. Physics_Chapter_5.pdf → Physics_Chapter_5.txt).
 ```
 
 **Sample prompt for Claude API:**
 
 ```
-Create an Anki flashcard deck from the attached study materials using the "anki-flashcard-generator" skill.
+Create a flashcard deck from the attached study materials using the "flashcard-generator" skill.
 Output only the flashcard lines in the format "Question | Answer", one per line.
 Do not include any preamble, headers, explanations, markdown formatting,
 or code fences. The raw output will be saved directly to a text file.
@@ -262,7 +262,7 @@ The original PDF conversion skill using visual PDF understanding.
 
 ## Versioning
 
-This repository uses per-skill version labels. The current study-generation labels are `flashcard-v3.6` for `anki-flashcard-generator` and `notes-v3.6` for `revision-notes-generator`. See [Releases](../../releases) for version history.
+This repository uses per-skill version labels. The current study-generation labels are `flashcard-v3.7` for `flashcard-generator` and `notes-v3.6` for `revision-notes-generator`. See [Releases](../../releases) for version history.
 
 ## License
 
