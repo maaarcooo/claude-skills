@@ -1,6 +1,6 @@
 # Flashcard Generator
 
-> **Source:** Evolved from [anki-flashcard/prompt-v4.txt](https://github.com/maaarcooo/llm-custom-instructions/blob/main/anki-flashcard/prompt-v4.txt). Current skill version: **flashcard-v3.7**. A standalone fallback prompt with full instruction parity is maintained as `flashcard-prompt-v5.md` for when the skill feature is unavailable.
+> **Source:** Evolved from [flashcard-generator/prompt-v4.txt](https://github.com/maaarcooo/llm-custom-instructions/blob/main/flashcard-generator/prompt-v4.txt). Current skill version: **flashcard-v3.7**. A standalone fallback prompt with full instruction parity is maintained as [`prompt-v6.md`](https://github.com/maaarcooo/llm-custom-instructions/blob/main/flashcard-generator/prompt-v6.md) for when the skill feature is unavailable.
 
 Generate study flashcards from PDF or Markdown content. Cards are terse, exam-aligned, and quick to self-grade during review.
 
