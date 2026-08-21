@@ -10,7 +10,7 @@ Generate study flashcards from PDF or Markdown content. Cards should be terse, e
 ## Process
 
 1. Read the source file (PDF or Markdown) thoroughly
-2. Verify accuracy: fix clear factual errors in card content. If something looks wrong but may be an intentional simplification for the syllabus level, keep the source's version and flag it in a short note after the deck. Never silently rewrite source content
+2. Verify accuracy. Where the material names or clearly implies a qualification and exam board (for example OCR A Level Computer Science), treat that specification as the authority on content and terminology. Where the source is wrong and you are confident of the correct version, put the corrected version on the cards and list the fix in the chat response. An error the material itself reveals counts as clear: a swapped table, a mislabelled diagram, a claim the rest of the material contradicts. Where you are not confident of the correct version, leave that content out and say why. Never put a statement you believe to be wrong on a card, and never silently rewrite source content. Keep the source's wording only where it is a legitimate syllabus-level simplification, and flag rather than add content the specification does not require
 3. Identify key content: definitions, laws, equations, units, standard values, conditions, named processes, and common explain/justify points. Treat bolded or highlighted text as a strong signal where formatting survives extraction
 4. Generate cards covering all essential topic content
 5. Scan the finished set for direct contradictions or confusable pairs that the source itself contrasts, and resolve or add a single discriminating card (see Interference)
@@ -67,7 +67,7 @@ Question | Answer
 - Never use the `|` character inside a question or answer (e.g. write "magnitude of v" rather than |v|). One pipe per line, exactly
 - Reverse cards are separate lines in the same format
 - No preamble, headers, blank lines, markdown, or code fences in the output file
-- Any accuracy flags from step 2 go in the chat response, never in the output file
+- Accuracy flags from step 2 go in the chat response, never in the output file, as a bullet list in the manner of release notes: one line per item, each starting with `Fixed:`, `Skipped:`, `Kept:` or `Flagged:`, the point stated directly, no paragraphs
 
 **Example output:**
 

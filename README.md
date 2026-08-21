@@ -13,7 +13,7 @@ Skills are grouped by target platform. Each platform directory contains independ
 | Skill | Purpose | Current Version | Status |
 |-------|---------|-----------------|--------|
 | [extracting-pdfs](#extracting-pdfs) | Extract and clean PDF content to markdown | - | Active |
-| [flashcard-generator](#flashcard-generator) | Generate flashcard decks from study materials | flashcard-v3.7 | Active |
+| [flashcard-generator](#flashcard-generator) | Generate flashcard decks from study materials | flashcard-v3.8 | Active |
 | [revision-notes-generator](#revision-notes-generator) | Create concise revision notes from study materials | notes-v3.6 | Active |
 | [handoff](#handoff) | Create structured handoff documents for session continuity | - | Active |
 | [discuss](#discuss) | Discuss and clarify direction before starting work | - | Active |
@@ -103,7 +103,7 @@ Use "extracting-pdfs" skill to convert this pdf into a markdown file.
 
 Generate study flashcards from PDF or Markdown content. Card design follows evidence-based principles with six specialised card types, built-in interference checking, coverage guidance prioritised by examinability, and LaTeX equation support (KaTeX-compatible).
 
-**Current version:** `flashcard-v3.7`
+**Current version:** `flashcard-v3.8`
 
 > **Full documentation:** See [`claude-ai-skills/flashcard-generator/README.md`](claude-ai-skills/flashcard-generator/README.md) for design principles, card types, output format, and card design rules.
 
@@ -262,7 +262,7 @@ The original PDF conversion skill using visual PDF understanding.
 
 ## Versioning
 
-This repository uses per-skill version labels. The current study-generation labels are `flashcard-v3.7` for `flashcard-generator` and `notes-v3.6` for `revision-notes-generator`. See [Releases](../../releases) for version history.
+This repository uses per-skill version labels. The current study-generation labels are `flashcard-v3.8` for `flashcard-generator` and `notes-v3.6` for `revision-notes-generator`. See [Releases](../../releases) for version history.
 
 ## License
 

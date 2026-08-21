@@ -1,6 +1,6 @@
 # Flashcard Generator
 
-> **Source:** Evolved from [flashcard-generator/prompt-v4.txt](https://github.com/maaarcooo/llm-custom-instructions/blob/main/flashcard-generator/prompt-v4.txt). Current skill version: **flashcard-v3.7**. A standalone fallback prompt with full instruction parity is maintained as [`prompt-v6.md`](https://github.com/maaarcooo/llm-custom-instructions/blob/main/flashcard-generator/prompt-v6.md) for when the skill feature is unavailable.
+> **Source:** Evolved from [flashcard-generator/prompt-v4.txt](https://github.com/maaarcooo/llm-custom-instructions/blob/main/flashcard-generator/prompt-v4.txt). Current skill version: **flashcard-v3.8**. A standalone fallback prompt with full instruction parity is maintained as [`prompt-v7.md`](https://github.com/maaarcooo/llm-custom-instructions/blob/main/flashcard-generator/prompt-v7.md) for when the skill feature is unavailable.
 
 Generate study flashcards from PDF or Markdown content. Cards are terse, exam-aligned, and quick to self-grade during review.
 
@@ -21,7 +21,7 @@ This split is the result of testing across model versions: prescriptive style ru
 
 - **Flexible atomicity** — One idea per card, but a definition may bundle one directly associated detail (formula, unit, key property) when naturally recalled together
 - **Bundle or split, not both** — A bundled detail never also gets its own card; no answer contains another card's answer
-- **Accuracy verification** — Clear factual errors are fixed; possible syllabus-level simplifications are kept and flagged in chat, never silently rewritten
+- **Accuracy verification** — The named exam board's specification is the authority. A confident fix goes on the cards and is listed in chat; doubtful content is left out with the reason given; no card ever carries a statement the model believes to be wrong. Legitimate syllabus-level simplifications are kept, out-of-spec content is flagged rather than added, and nothing is silently rewritten
 - **Constrained interference check** — Exactly two passes: resolve contradicting cards, and add one compare card per pair the source itself contrasts
 - **Six card types** — Definition (with scoped reverse cards), recall, formula application, cloze, explain, enumeration
 - **Content-driven deck size** — No card-count targets; the material decides
@@ -33,7 +33,7 @@ When the user asks for flashcards, a flashcard deck, or study cards from source 
 ## How It Works
 
 1. **Read** the source file (PDF or Markdown) thoroughly
-2. **Verify** accuracy: fix clear factual errors; keep and flag possible intentional simplifications (flags go in the chat response, never the output file)
+2. **Verify** accuracy against the named specification: confident fixes go on the cards, doubtful content is left out, simplifications are kept, and every fix, omission or flag is reported in chat as release-note bullets (never in the output file)
 3. **Identify** key content: definitions, laws, equations, units, standard values, conditions, named processes, and common explain/justify points
 4. **Generate** cards covering all essential topic content
 5. **Check** the finished set for contradictions and source-contrasted pairs only
@@ -129,6 +129,7 @@ Then trigger by asking for flashcards from source material.
 
 ## Version Notes
 
+- **flashcard-v3.8** — Accuracy pass reworked: the named qualification and exam board's specification is the authority; a confident correction goes on the cards and is listed in chat, a doubtful one means the content is left out with the reason given, and no card ever carries a statement the model believes wrong. Out-of-spec content is flagged rather than added. Chat flags are now a release-note bullet list (`Fixed:` / `Skipped:` / `Kept:` / `Flagged:`). Prompted by real decks generated from OCR A Level notes where a swapped example table was kept because it only "seemed" reversed
 - **flashcard-v3.7** — Renamed from anki-flashcard-generator to flashcard-generator. Broadened trigger to all flashcard requests. Added LaTeX equation formatting (KaTeX-compatible `$...$` / `$$...$$`) for mathematical expressions
 - **flashcard-v3.6** — Rebuilt around the defect-blocking vs style-prescribing rule split. Softened atomicity to permit definition + associated-detail bundling, added bundle-or-split, banned circular answers, constrained the interference check to two cases, removed card-count anchors, scoped reverse cards to key terms, removed GCSE-era "Higher Tier" references, added the pipe-character exclusion. Validated on A-Level Physics sources inside and outside projects with convergent output
 - **flashcard-v3.3–flashcard-v3.5** — Principle-heavy versions (depth of processing, universal bidirectional cards, personal connection); produced over-elaborated decks and were superseded
