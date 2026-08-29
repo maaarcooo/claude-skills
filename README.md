@@ -111,7 +111,7 @@ Generate study flashcards from PDF or Markdown content. Card design follows evid
 
 ```
 Create a flashcard deck from the attached study materials using the "flashcard-generator" skill.
-Output the deck as a .txt file named after the source file (e.g. Physics_Chapter_5.pdf → Physics_Chapter_5.txt).
+Output the deck as a .txt file, and named it after the topic title.
 ```
 
 **Sample prompt for Claude API:**
